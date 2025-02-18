@@ -11,7 +11,7 @@ export class MyDiamond extends CGFobject {
 	}
 	
 	initBuffers() {
-		this.vertices = [
+		this.vertices = [ // x, y, z, x1, y1, z1, x2, ...
 			-1, 0, 0,	//0
 			0, -1, 0,	//1
 			0, 1, 0,	//2
