@@ -13,6 +13,6 @@
 
 ![Screenshot 2](screenshots/cg-t02g07-tp2-2.png)
 
-- In exercise 3 ...
+- In exercise 3 we were able to do everything that was asked.
 
 ![Screenshot 3](screenshots/cg-t02g07-tp2-3.png)

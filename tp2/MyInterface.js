@@ -27,6 +27,9 @@ export class MyInterface extends CGFinterface {
         //Checkbox for unit cube
         this.gui.add(this.scene, 'displayUnitCube').name('Unit Cube');
 
+        //Checkbox for quad cube
+        this.gui.add(this.scene, 'displayUnitCubeQuad').name('Quad Cube');
+
         //Slider element in GUI
         this.gui.add(this.scene, 'scaleFactor', 0.1, 5).name('Scale Factor');
 
