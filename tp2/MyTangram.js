@@ -72,9 +72,24 @@ export class MyTangram extends CGFobject {
         this.trianglePurple.display();
         this.scene.popMatrix();
 
+        var translateMatrix = [
+            1, 0, 0, 0,
+            0, 1, 0, 0,
+            0, 0, 1, 0,
+            3, 5, 0, 1
+        ];
+
+        var angle = Math.PI / 3;
+        var rotateMatrix = [
+            Math.cos(angle), -Math.sin(angle), 0, 0,
+            Math.sin(angle), Math.cos(angle), 0, 0,
+            0, 0, 1, 0,
+            0, 0, 0, 1
+        ];
+
         this.scene.pushMatrix();
-        this.scene.translate(3, 5, 0);
-        this.scene.rotate(Math.PI/6, 0, 0, 1);
+        this.scene.multMatrix(translateMatrix);
+        this.scene.multMatrix(rotateMatrix);
         this.scene.setDiffuse(...green);
         this.diamond.display();
         this.scene.popMatrix();
