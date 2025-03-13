@@ -13,3 +13,9 @@
 - In exercice 2 we were able to do everything that was asked.
 
 ![Screenshot 3](screenshots/cg-t02g07-tp3-3.png)
+
+- In exercice 3 we were able to do everything that was asked. We also added an extra photo of the smoothed edges, making them less evident, and giving the surface a curved appearance.
+
+![Screenshot 4](screenshots/cg-t02g07-tp3-4.png)
+
+![Screenshot 5](screenshots/cg-t02g07-tp3-4_extra.png)
