@@ -9,3 +9,7 @@
 ![Screenshot 1](screenshots/cg-t02g07-tp3-1.png)
 
 ![Screenshot 2](screenshots/cg-t02g07-tp3-2.png)
+
+- In exercice 2 we were able to do everything that was asked.
+
+![Screenshot 3](screenshots/cg-t02g07-tp3-3.png)
