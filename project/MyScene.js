@@ -1,6 +1,6 @@
-import { CGFscene, CGFcamera, CGFaxis, CGFtexture } from "../lib/CGF.js";
+import { CGFscene, CGFcamera, CGFaxis, CGFappearance, CGFtexture } from "../lib/CGF.js";
 import { MyPlane } from "./MyPlane.js";
-import { MySphere } from "./MySphere.js";
+import { MyPanorama } from "./MyPanorama.js";
 
 /**
  * MyScene
@@ -31,9 +31,9 @@ export class MyScene extends CGFscene {
     // Initialize scene objects
     this.axis = new CGFaxis(this, 20, 1);
     this.plane = new MyPlane(this, 64);
-    this.sphere = new MySphere(this, 20, 50, 50, false);
 
-    this.earthTexture = await this.loadTexture("earth.jpg");
+    this.earthTexture = await this.loadTexture("textures/landscape2.jpg");
+    this.panorama = new MyPanorama(this, this.earthTexture);  
   }
 
   initLights() {
@@ -45,7 +45,7 @@ export class MyScene extends CGFscene {
 
   initCameras() {
     this.camera = new CGFcamera(
-      0.4,
+      0.9,
       0.1,
       1000,
       vec3.fromValues(200, 200, 200),
@@ -103,13 +103,12 @@ export class MyScene extends CGFscene {
 
     this.setDefaultAppearance();
 
-    // Aplicar a textura antes de desenhar a esfera
-    if (this.earthTexture) {
-      this.earthTexture.bind();
-    }
+    
 
     this.plane.display();
     // Display the sphere with texture
-    this.sphere.display();
+    if (this.panorama) {
+      this.panorama.display();
+    }
   }
 }

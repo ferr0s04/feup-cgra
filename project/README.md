@@ -4,5 +4,10 @@
 
 ## Project Notes
 
-- Earth sphere done with not problems.
+- Earth sphere done without problems.
 
+- Panorama created without problems.
+
+![Screenshot 1](screenshots/project-t02g07-01.png)
+
+![Screenshot 2](screenshots/project-t02g07-02.png)
