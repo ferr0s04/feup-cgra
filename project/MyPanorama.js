@@ -8,9 +8,8 @@ import { MySphere } from './MySphere.js';
  */
 export class MyPanorama extends CGFobject {
 
-    constructor(scene, texture) {
+    constructor(scene) {
         super(scene);
-        this.texture = texture;
         this.initBuffers();
     }
 
@@ -23,7 +22,9 @@ export class MyPanorama extends CGFobject {
         this.panoramaTexture.setSpecular(0.1, 0.1, 0.1, 1);
         this.panoramaTexture.setShininess(10);
 
-        this.panoramaTexture.setTexture(this.texture);
+        this.panoramaTexture.loadTexture("textures/landscape2.jpg");
+
+        
         this.panoramaTexture.setTextureWrap('REPEAT', 'REPEAT');
     }
 

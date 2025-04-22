@@ -1,6 +1,7 @@
 import { CGFscene, CGFcamera, CGFaxis, CGFappearance, CGFtexture } from "../lib/CGF.js";
 import { MyPlane } from "./MyPlane.js";
 import { MyPanorama } from "./MyPanorama.js";
+import { MyBuilding } from "./MyBuilding.js";
 
 /**
  * MyScene
@@ -18,7 +19,7 @@ export class MyScene extends CGFscene {
     this.initLights();
 
     // Background color
-    this.gl.clearColor(0, 0, 0, 1.0);
+    this.gl.clearColor(1, 1, 1, 1.0);
 
     this.gl.clearDepth(100.0);
     this.gl.enable(this.gl.DEPTH_TEST);
@@ -32,12 +33,21 @@ export class MyScene extends CGFscene {
     this.axis = new CGFaxis(this, 20, 1);
     this.plane = new MyPlane(this, 64);
 
-    this.earthTexture = await this.loadTexture("textures/landscape2.jpg");
-    this.panorama = new MyPanorama(this, this.earthTexture);  
+    
+    this.panorama = new MyPanorama(this);  
+
+    this.windowTexture = new CGFappearance(this);
+    this.windowTexture.loadTexture("textures/window1.jpg");
+    this.windowTexture.setDiffuse(0.9, 0.9, 0.9, 1);
+    this.windowTexture.setSpecular(0.1, 0.1, 0.1, 1);
+    this.windowTexture.setShininess(10);
+
+    this.building = new MyBuilding(this, 30, 3, 3, this.windowTexture, [1, 1, 0]);
+
   }
 
   initLights() {
-    this.lights[0].setPosition(200, 200, 200, 1);
+    this.lights[0].setPosition(20, 20, 20, 1);
     this.lights[0].setDiffuse(1.0, 1.0, 1.0, 1.0);
     this.lights[0].enable();
     this.lights[0].update();
@@ -48,7 +58,7 @@ export class MyScene extends CGFscene {
       0.9,
       0.1,
       1000,
-      vec3.fromValues(200, 200, 200),
+      vec3.fromValues(17, 17, 17),
       vec3.fromValues(0, 0, 0)
     );
   }
@@ -103,12 +113,10 @@ export class MyScene extends CGFscene {
 
     this.setDefaultAppearance();
 
-    
-
     this.plane.display();
-    // Display the sphere with texture
-    if (this.panorama) {
-      this.panorama.display();
-    }
+    
+    this.building.display();
+    this.panorama.display();
+    
   }
 }
