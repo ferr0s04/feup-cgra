@@ -22,7 +22,7 @@ export class MyPanorama extends CGFobject {
         this.panoramaTexture.setSpecular(0.1, 0.1, 0.1, 1);
         this.panoramaTexture.setShininess(10);
 
-        this.panoramaTexture.loadTexture("textures/landscape2.jpg");
+        this.panoramaTexture.loadTexture("textures/landscape3.jpg");
 
         
         this.panoramaTexture.setTextureWrap('REPEAT', 'REPEAT');

@@ -17,9 +17,9 @@ export class MyBuilding extends CGFobject {
 
     initElements() {
         this.floorHeight = 2.5;
-        this.depth = 10;
+        this.depth = this.totalWidth / 3;
 
-        this.centralWidth = this.totalWidth / 3;
+        this.centralWidth = this.depth;
         this.lateralWidth = 0.75 * this.centralWidth;
 
         this.centralFloors = this.numFloors + 1;
@@ -60,70 +60,34 @@ export class MyBuilding extends CGFobject {
         this.heliportQuad = new MyQuad(this.scene);
         this.signQuad = new MyQuad(this.scene);
 
-        this.createModules();
-    }
-
-    createModules() {
         const h = this.floorHeight;
 
-        this.leftModule = new MyCube(this.scene, this.generateVertices(
-            this.centralWidth, 0, 0,
-            this.lateralWidth, this.numFloors * h, this.depth * 0.8
-        ));
-
-        this.centralModule = new MyCube(this.scene, this.generateVertices(
-            0, 0, 0,
-            this.centralWidth, this.centralFloors * h, this.depth
-        ));
-
-        this.rightModule = new MyCube(this.scene, this.generateVertices(
-            -this.lateralWidth, 0, 0,
-            this.lateralWidth, this.numFloors * h, this.depth * 0.8
-        ));
-    }
-
-    /**
-     * Gera vertices em ordem CCW por face (6 faces * 4 vertices cada = 24 vertices)
-     */
-    generateVertices(x, y, z, width, height, depth) {
-        return [
-            x, y, z + depth, // Frente (+z)
-            x + width, y, z + depth,
-            x + width, y + height, z + depth,
-            x, y + height, z + depth,            
-            x + width, y, z, // Trás (-z)
-            x, y, z,
-            x, y + height, z,
-            x + width, y + height, z,
-            x, y, z, // Esquerda (-x)
-            x, y, z + depth,
-            x, y + height, z + depth,
-            x, y + height, z,
-            x + width, y, z + depth, // Direita (+x)
-            x + width, y, z,
-            x + width, y + height, z,
-            x + width, y + height, z + depth,
-            x, y + height, z + depth, // Cima (+y)
-            x + width, y + height, z + depth,
-            x + width, y + height, z,
-            x, y + height, z,
-            x, y, z, // Base (-y)
-            x + width, y, z,
-            x + width, y, z + depth,
-            x, y, z + depth
-        ];
+        this.leftModule = new MyCube(this.scene);
+        this.centralModule = new MyCube(this.scene);
+        this.rightModule = new MyCube(this.scene);
     }
 
     display() {
+        this.scene.pushMatrix();
+        this.scene.translate(-this.lateralWidth, 0, 0);
+        this.scene.scale(this.lateralWidth, this.floorHeight * (this.centralFloors - 1), this.depth * 0.8);
         this.wallAppearance.apply();
         this.leftModule.display();
-        console.log(this.wallAppearance);
+        //console.log(this.wallAppearance);
+        this.scene.popMatrix();
         
+        this.scene.pushMatrix();
+        this.scene.scale(this.centralWidth, this.floorHeight * this.centralFloors, this.depth);
         this.wallAppearance.apply();
         this.centralModule.display();
+        this.scene.popMatrix();
 
+        this.scene.pushMatrix();
+        this.scene.translate(this.centralWidth, 0, 0);
+        this.scene.scale(this.lateralWidth, this.floorHeight * (this.centralFloors - 1), this.depth * 0.8);
         this.wallAppearance.apply();
         this.rightModule.display();
+        this.scene.popMatrix();
 
         // Door
         let h = this.floorHeight;

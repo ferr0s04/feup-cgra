@@ -12,6 +12,6 @@
 
 ![Screenshot 2](screenshots/project-t02g07-01.1.png)
 
-- Building was created. We have a problem when the panorama is being drawn that the building catches the color of the background.
+- Building was created. We had a problem when the panorama was being drawn, the building catched the color of the background. The problem was fixed with the help of the teacher and the monitor.
 
 ![Screenshot 3](screenshots/project-t02g07-02.png)

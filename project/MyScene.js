@@ -31,7 +31,7 @@ export class MyScene extends CGFscene {
 
     // Initialize scene objects
     this.axis = new CGFaxis(this, 20, 1);
-    this.plane = new MyPlane(this, 64);
+    this.plane = new MyPlane(this, 64, 0, 20, 0, 20);
 
     
     this.panorama = new MyPanorama(this);  
@@ -42,8 +42,14 @@ export class MyScene extends CGFscene {
     this.windowTexture.setSpecular(0.1, 0.1, 0.1, 1);
     this.windowTexture.setShininess(10);
 
-    this.building = new MyBuilding(this, 30, 3, 3, this.windowTexture, [1, 1, 0]);
+    this.grassTexture = new CGFappearance(this);
+    this.grassTexture.loadTexture("textures/grass.jpg");
+    this.grassTexture.setDiffuse(0.9, 0.9, 0.9, 1);
+    this.grassTexture.setSpecular(0.1, 0.1, 0.1, 1);
+    this.grassTexture.setShininess(10);
+    this.grassTexture.setTextureWrap("REPEAT", "REPEAT");
 
+    this.building = new MyBuilding(this, 30, 3, 3, this.windowTexture, [0.8, 0.6, 0.3]);
   }
 
   initLights() {
@@ -55,10 +61,10 @@ export class MyScene extends CGFscene {
 
   initCameras() {
     this.camera = new CGFcamera(
-      0.9,
+      1,
       0.1,
       1000,
-      vec3.fromValues(17, 17, 17),
+      vec3.fromValues(25, 25, 25),
       vec3.fromValues(0, 0, 0)
     );
   }
@@ -102,6 +108,7 @@ export class MyScene extends CGFscene {
     // Clear image and depth buffer everytime we update the scene
     this.gl.viewport(0, 0, this.gl.canvas.width, this.gl.canvas.height);
     this.gl.clear(this.gl.COLOR_BUFFER_BIT | this.gl.DEPTH_BUFFER_BIT);
+
     // Initialize Model-View matrix as identity (no transformation)
     this.updateProjectionMatrix();
     this.loadIdentity();
@@ -109,14 +116,18 @@ export class MyScene extends CGFscene {
     this.applyViewMatrix();
 
     // Draw axis
-    this.axis.display();
+    //this.axis.display();
 
     this.setDefaultAppearance();
-
-    this.plane.display();
     
     this.building.display();
     this.panorama.display();
-    
+
+    this.grassTexture.apply();
+    this.pushMatrix();
+    this.scale(300, 300, 300);
+    this.rotate(-90 * Math.PI / 180, 1, 0, 0);
+    this.plane.display();
+    this.popMatrix();
   }
 }
