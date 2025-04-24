@@ -2,6 +2,7 @@ import { CGFscene, CGFcamera, CGFaxis, CGFappearance, CGFtexture } from "../lib/
 import { MyPlane } from "./MyPlane.js";
 import { MyPanorama } from "./MyPanorama.js";
 import { MyBuilding } from "./MyBuilding.js";
+import { MyForest } from "./MyForest.js";
 
 /**
  * MyScene
@@ -32,6 +33,7 @@ export class MyScene extends CGFscene {
     // Initialize scene objects
     this.axis = new CGFaxis(this, 20, 1);
     this.plane = new MyPlane(this, 64, 0, 20, 0, 20);
+    this.forest = new MyForest(this, 1, 1, 30, 30, true); // Floresta com 1 árvore de teste
 
     
     this.panorama = new MyPanorama(this);  
@@ -120,8 +122,9 @@ export class MyScene extends CGFscene {
 
     this.setDefaultAppearance();
     
-    this.building.display();
+    //this.building.display();
     this.panorama.display();
+    this.forest.display();
 
     this.grassTexture.apply();
     this.pushMatrix();
