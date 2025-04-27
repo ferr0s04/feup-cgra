@@ -12,6 +12,10 @@
 
 ![Screenshot 2](screenshots/project-t02g07-01.1.png)
 
-- Building was created. We had a problem when the panorama was being drawn, the building catched the color of the background. The problem was fixed with the help of the teacher and the monitor.
+- Building was created. We had an initial problem when the panorama was being drawn, the building catched the color of the background. The problem was fixed with the help of the teacher and the monitor.
 
 ![Screenshot 3](screenshots/project-t02g07-02.png)
+
+- The forest was created.
+
+![Screenshot 4](screenshots/project-t02g07-03.png)

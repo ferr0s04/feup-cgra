@@ -16,17 +16,20 @@ export class MyCone extends CGFobject {
 
         const alphaAng = 2 * Math.PI / this.slices;
 
-        // Laterais
-        for (let i = 0; i < this.slices; i++) {
-            const ang = i * alphaAng;
+        for (let i = 0; i <= this.slices; i++) {
+            const ang = i % this.slices * alphaAng;
             const x = Math.cos(ang);
             const z = -Math.sin(ang);
         
-            // vértice na base
             this.vertices.push(x, 0, z);
             this.normals.push(x, Math.cos(Math.PI / 4.0), z);
-            this.texCoords.push((i / this.slices) * 2.5, 0);  // u varia de 0 a 2.5
-            this.indices.push(i, (i + 1) % this.slices, this.slices);
+
+            const u = i / this.slices;
+            this.texCoords.push(u, 0);
+
+            if (i < this.slices) {
+                this.indices.push(i, (i + 1) % (this.slices + 1), this.slices + 1);
+            }
         }
 
         // Vértice superior

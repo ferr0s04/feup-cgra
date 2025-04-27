@@ -29,7 +29,7 @@ export class MyTree extends CGFobject {
         if (this.trunkTexture) {
             this.trunkAppearance.loadTexture(this.trunkTexture);
             this.trunkAppearance.setDiffuse(1, 1, 1, 1);
-            this.trunkAppearance.setTextureWrap('REPEAT', 'REPEAT');
+            this.trunkAppearance.setTextureWrap('REPEAT', 'CLAMP_TO_EDGE');
         } else {
             this.trunkAppearance.setAmbient(0.4, 0.2, 0.05, 1.0);
             this.trunkAppearance.setDiffuse(0.4, 0.2, 0.05, 1.0);
@@ -43,7 +43,7 @@ export class MyTree extends CGFobject {
         if (this.foliageTexture) {
             this.foliageAppearance.loadTexture(this.foliageTexture);
             this.foliageAppearance.setDiffuse(1, 1, 1, 1);
-            this.foliageAppearance.setTextureWrap('REPEAT', 'REPEAT');
+            this.foliageAppearance.setTextureWrap('REPEAT', 'CLAMP_TO_EDGE');
         } else {
             this.foliageAppearance.setAmbient(...this.foliageColor, 1.0);
             this.foliageAppearance.setDiffuse(...this.foliageColor, 1.0);

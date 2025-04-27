@@ -33,9 +33,6 @@ export class MyScene extends CGFscene {
     // Initialize scene objects
     this.axis = new CGFaxis(this, 20, 1);
     this.plane = new MyPlane(this, 64, 0, 20, 0, 20);
-    this.forest = new MyForest(this, 1, 1, 30, 30, true); // Floresta com 1 árvore de teste
-
-    
     this.panorama = new MyPanorama(this);  
 
     this.windowTexture = new CGFappearance(this);
@@ -51,7 +48,14 @@ export class MyScene extends CGFscene {
     this.grassTexture.setShininess(10);
     this.grassTexture.setTextureWrap("REPEAT", "REPEAT");
 
-    this.building = new MyBuilding(this, 30, 3, 3, this.windowTexture, [0.8, 0.6, 0.3]);
+    let totalBuildingWidth = 30;
+    this.building = new MyBuilding(this, totalBuildingWidth, 5, 3, this.windowTexture, [0.8, 0.6, 0.3]);
+    this.building.centralWidth = totalBuildingWidth/3;
+
+    //this.forest = new MyForest(this, 1, 1, 30, 30, true); // Floresta com 1 árvore de teste
+    this.forest = new MyForest(this, 3, 3, 20, 20, true, 3); // normal - 3 variedades
+    //this.forest = new MyForest(this, 3, 4, 40, 40, true, 6); // more variety
+    //this.forest = new MyForest(this, 3, 4, 40, 40, true, 2); // less variety
   }
 
   initLights() {
@@ -122,13 +126,21 @@ export class MyScene extends CGFscene {
 
     this.setDefaultAppearance();
     
-    //this.building.display();
-    this.panorama.display();
-    this.forest.display();
+    // Make the building appear in the default position
+    if (this.building) {
+      this.pushMatrix();
+      this.translate(-this.building.centralWidth, 0, -50);
+      this.building.display();
+      this.popMatrix();
+    }
+    
+    if (this.panorama) this.panorama.display();    
+    if (this.forest) this.forest.display();
+
 
     this.grassTexture.apply();
     this.pushMatrix();
-    this.scale(300, 300, 300);
+    this.scale(100, 100, 100);
     this.rotate(-90 * Math.PI / 180, 1, 0, 0);
     this.plane.display();
     this.popMatrix();
