@@ -54,7 +54,7 @@ export class MyScene extends CGFscene {
 
     //this.forest = new MyForest(this, 1, 1, 30, 30, true); // Floresta com 1 árvore de teste
     this.forest = new MyForest(this, 3, 3, 20, 20, true, 3); // normal - 3 variedades
-    //this.forest = new MyForest(this, 3, 4, 40, 40, true, 6); // more variety
+    //this.forest = new MyForest(this, 20, 20, 200, 200, true, 10); // huge forest
     //this.forest = new MyForest(this, 3, 4, 40, 40, true, 2); // less variety
   }
 
