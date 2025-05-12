@@ -104,6 +104,44 @@ export class MyCube extends CGFobject {
              0,  1,  0   
         ];
 
+        this.texCoords = [
+            // Front
+            0, 0,
+            1, 0,
+            1, 1,
+            0, 1,
+
+            // Back
+            0, 0,
+            1, 0,
+            1, 1,
+            0, 1,
+
+            // Left
+            0, 0,
+            1, 0,
+            1, 1,
+            0, 1,
+
+            // Right
+            0, 0,
+            1, 0,
+            1, 1,
+            0, 1,
+
+            // Bottom
+            0, 0,
+            1, 0,
+            1, 1,
+            0, 1,
+
+            // Top
+            0, 0,
+            1, 0,
+            1, 1,
+            0, 1
+        ];
+
 		//The defined indices (and corresponding vertices)
 		//will be read in groups of three to draw triangles
         this.primitiveType = this.scene.gl.TRIANGLES;

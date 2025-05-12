@@ -10,17 +10,16 @@ export class MyInterface extends CGFinterface {
     }
 
     init(application) {
-        // call CGFinterface init
         super.init(application);
-
-        // init GUI. For more information on the methods, check:
-        // https://github.com/dataarts/dat.gui/blob/master/API.md
+    
         this.gui = new dat.GUI();
-
+    
+        this.gui.add(this.scene, 'speedFactor', 0.1, 3).name('Speed Factor');
+    
         this.initKeys();
-
+    
         return true;
-    }
+    }    
 
     initKeys() {
         // create reference from the scene to the GUI

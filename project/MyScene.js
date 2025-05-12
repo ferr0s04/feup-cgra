@@ -3,6 +3,8 @@ import { MyPlane } from "./MyPlane.js";
 import { MyPanorama } from "./MyPanorama.js";
 import { MyBuilding } from "./MyBuilding.js";
 import { MyForest } from "./MyForest.js";
+import { MyLandingGear } from "./MyLandingGear.js";
+import { MyHeli } from "./MyHeli.js";
 
 /**
  * MyScene
@@ -11,9 +13,10 @@ import { MyForest } from "./MyForest.js";
 export class MyScene extends CGFscene {
   constructor() {
     super();
+    this.heliSound = document.getElementById("heli-sound");
   }
 
-  async init(application) {
+  init(application) {
     super.init(application);
 
     this.initCameras();
@@ -52,10 +55,24 @@ export class MyScene extends CGFscene {
     this.building = new MyBuilding(this, totalBuildingWidth, 5, 3, this.windowTexture, [0.8, 0.6, 0.3]);
     this.building.centralWidth = totalBuildingWidth/3;
 
+    this.speedFactor = 1.0;
+    
+    this.heli = new MyHeli(this,
+      -this.building.centralWidth + this.building.totalWidth / 6 - 1.5,
+      this.building.centralFloors * 2.5,
+      -50 + this.building.depth - 1.5,
+      0, 0, 0,
+      -this.building.centralWidth + this.building.totalWidth / 6 - 1.5,
+      this.building.centralFloors * 2.5,
+      -50 + this.building.depth - 1.5);
+  
+
     //this.forest = new MyForest(this, 1, 1, 30, 30, true); // Floresta com 1 árvore de teste
-    this.forest = new MyForest(this, 3, 3, 20, 20, true, 3); // normal - 3 variedades
-    //this.forest = new MyForest(this, 20, 20, 200, 200, true, 10); // huge forest
+    this.forest = new MyForest(this, 7, 8, 55, 55, true, 20); // normal - 3 variedades
+    //this.forest = new MyForest(this, 20, 20, 200, 200, true, 60); // huge forest
     //this.forest = new MyForest(this, 3, 4, 40, 40, true, 2); // less variety
+
+    this.landing = new MyLandingGear(this);
   }
 
   initLights() {
@@ -76,26 +93,49 @@ export class MyScene extends CGFscene {
   }
 
   checkKeys() {
-    var text = "Keys pressed: ";
-    var keysPressed = false;
-
-    // Check for key codes e.g. in https://keycode.info/
-    if (this.gui.isKeyPressed("KeyW")) {
-      text += " W ";
+    let keysPressed = false;
+  
+    if (this.gui.isKeyPressed("KeyA")) {
+      this.heli.turn(-0.05 * this.speedFactor);
       keysPressed = true;
+    }
+
+    if (this.gui.isKeyPressed("KeyD")) {
+        this.heli.turn(0.05 * this.speedFactor);
+        keysPressed = true;
+    }
+
+    if (this.gui.isKeyPressed("KeyW")) {
+        this.heli.accelerate(0.01 * this.speedFactor);
+        keysPressed = true;
     }
 
     if (this.gui.isKeyPressed("KeyS")) {
-      text += " S ";
-      keysPressed = true;
+        this.heli.accelerate(-0.01 * this.speedFactor);
+        keysPressed = true;
     }
-    if (keysPressed)
-      console.log(text);
-  }
 
+    if (this.gui.isKeyPressed("KeyR")) {
+      this.heli.reset();
+      console.log("Eagle has returned to base.");
+    }
+
+    if (this.gui.isKeyPressed("KeyP")) {
+      this.heli.startTakeOff();
+    }
+    
+    if (this.gui.isKeyPressed("KeyL")) {
+        this.heli.startLanding();
+    }
+  
+    //if (keysPressed)
+      //console.log(`Pos: (${this.heli.x.toFixed(2)}, ${this.heli.y.toFixed(2)}, ${this.heli.z.toFixed(2)}) | Vel: (${this.heli.velX.toFixed(2)}, ${this.heli.velY.toFixed(2)}, ${this.heli.velZ.toFixed(2)})`);
+  }
+  
   update(t) {
     this.checkKeys();
-  }
+    this.heli.update(t);
+  }  
 
   setDefaultAppearance() {
     this.setAmbient(0.5, 0.5, 0.5, 1.0);
@@ -126,17 +166,7 @@ export class MyScene extends CGFscene {
 
     this.setDefaultAppearance();
     
-    // Make the building appear in the default position
-    if (this.building) {
-      this.pushMatrix();
-      this.translate(-this.building.centralWidth, 0, -50);
-      this.building.display();
-      this.popMatrix();
-    }
-    
-    if (this.panorama) this.panorama.display();    
-    if (this.forest) this.forest.display();
-
+    //if (this.panorama) this.panorama.display();    
 
     this.grassTexture.apply();
     this.pushMatrix();
@@ -144,5 +174,24 @@ export class MyScene extends CGFscene {
     this.rotate(-90 * Math.PI / 180, 1, 0, 0);
     this.plane.display();
     this.popMatrix();
+
+    // Make the building appear in the default position
+    if (this.building) {
+      this.pushMatrix();
+      this.translate(-this.building.centralWidth, 0, -50);
+      this.building.display();
+      this.popMatrix();
+    }
+
+    //if (this.forest) this.forest.display();
+
+    if (this.heli) {
+      this.pushMatrix();
+      //this.translate(-this.building.centralWidth + this.building.totalWidth / 6 - 2, this.building.centralFloors * 2.5, -50 + this.building.depth - 2);
+      this.heli.display();
+      this.popMatrix();
+    }
+    //if (this.landing) this.landing.display();
+
   }
 }
