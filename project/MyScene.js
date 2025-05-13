@@ -59,7 +59,7 @@ export class MyScene extends CGFscene {
     
     this.heli = new MyHeli(this,
       -this.building.centralWidth + this.building.totalWidth / 6 - 1.5,
-      this.building.centralFloors * 2.5,
+      this.building.centralFloors * 2.5 + 0.8,
       -50 + this.building.depth - 1.5,
       0, 0, 0,
       -this.building.centralWidth + this.building.totalWidth / 6 - 1.5,
@@ -68,7 +68,7 @@ export class MyScene extends CGFscene {
   
 
     //this.forest = new MyForest(this, 1, 1, 30, 30, true); // Floresta com 1 árvore de teste
-    this.forest = new MyForest(this, 7, 8, 55, 55, true, 20); // normal - 3 variedades
+    this.forest = new MyForest(this, 7, 8, 45, 45, true, 20); // normal - 3 variedades
     //this.forest = new MyForest(this, 20, 20, 200, 200, true, 60); // huge forest
     //this.forest = new MyForest(this, 3, 4, 40, 40, true, 2); // less variety
 
@@ -141,9 +141,7 @@ export class MyScene extends CGFscene {
       this.heli.startTakeOff();
     }
   
-    //if (keysPressed)
-      //console.log(`Pos: (${this.heli.x.toFixed(2)}, ${this.heli.y.toFixed(2)}, ${this.heli.z.toFixed(2)}) | Vel: (${this.heli.velX.toFixed(2)}, ${this.heli.velY.toFixed(2)}, ${this.heli.velZ.toFixed(2)})`);
-  }
+    }
   
   update(t) {
     this.checkKeys();
@@ -179,7 +177,7 @@ export class MyScene extends CGFscene {
 
     this.setDefaultAppearance();
     
-    //if (this.panorama) this.panorama.display();    
+    if (this.panorama) this.panorama.display();    
 
     this.grassTexture.apply();
     this.pushMatrix();
@@ -196,15 +194,8 @@ export class MyScene extends CGFscene {
       this.popMatrix();
     }
 
-    //if (this.forest) this.forest.display();
+    if (this.forest) this.forest.display();
 
-    if (this.heli) {
-      this.pushMatrix();
-      //this.translate(-this.building.centralWidth + this.building.totalWidth / 6 - 2, this.building.centralFloors * 2.5, -50 + this.building.depth - 2);
-      this.heli.display();
-      this.popMatrix();
-    }
-    if (this.landing) this.landing.display();
-
+    if (this.heli) this.heli.display();
   }
 }

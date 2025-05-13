@@ -1,124 +1,30 @@
-import {CGFobject} from '../lib/CGF.js';
+import { CGFobject, CGFappearance } from '../lib/CGF.js';
 import { MyCubeSize } from './MyCubeSize.js';
 
 export class MyLandingGear extends CGFobject {
     constructor(scene) {
         super(scene);
-        //this.initBuffers();
-        //this.rightLeg = new MyCubeSize(scene, 0, 0.3, 0.25, 0.55, 0.5, 0.8);
+        this.landingGearMaterial = new CGFappearance(scene);
+        this.landingGearMaterial.setAmbient(0.3, 0.3, 0.3, 1);
+        this.landingGearMaterial.setDiffuse(0.7, 0.7, 0.7, 1);
+        this.landingGearMaterial.setSpecular(0.2, 0.2, 0.2, 1);
+        this.landingGearMaterial.setShininess(10);
+
+        this.rightLeg = new MyCubeSize(scene, 0, 0.3, 0.25, 1, 0.5, 0.8);
+        this.leftLeg = new MyCubeSize(scene, 0, 0.3, 0.25, 1, 3.7, 4);
+        this.mainBase = new MyCubeSize(scene, 0, 0.3, 0, 0.25, 0, 5);
     }
 
-    /*initBuffers() { 
-        this.vertices = [
-            0, 0, 5,   // 0
-            0.3, 0, 5,   // 1
-            0.3, 0.25, 5,   // 2
-            0, 0.25, 5,   // 3
-            0, 0, 0,  // 4
-            0.3, 0, 0,  // 5
-            0.3, 0.25, 0,  // 6
-            0, 0.25, 0,  // 7
-            0, 0, 0,  // 8
-            0, 0, 5,  // 9
-            0, 0.25, 5,  // 10
-            0, 0.25, 0,  // 11
-            0.3, 0, 0,  // 12
-            0.3, 0, 5,  // 13
-            0.3, 0.25, 5,  // 14
-            0.3, 0.25, 0,  // 15
-            0, 0, 0,  // 16
-            0.3, 0, 0,  // 17
-            0.3, 0, 5,  // 18
-            0, 0, 5,  // 19
-            0, 0.25, 0,  // 20
-            0.3, 0.25, 0,  // 21
-            0.3, 0.25, 5,  // 22
-            0, 0.25, 5,   // 23
-
-            /*0, 0.55, 0.5,    // 24
-            0.3, 0.55, 0.5,     // 25
-            0, 0.55, 0.8,     // 26
-            0.3, 0.55, 0.8,    // 27
-
-            0, 0.25, 0.5,    // 28
-            0.3, 0.25, 0.5,     // 29
-            0, 0.25, 0.8,     // 30
-            0.3, 0.25, 0.8,    // 31*/
-        /*];
-
-		//Counter-clockwise reference of vertices
-        this.indices = [
-            0, 1, 2,
-            2, 3, 0,
-            6, 5, 4,
-            4, 7, 6,
-            8, 9, 10,
-            10, 11, 8,
-            14, 13, 12,
-            12, 15, 14,
-            16, 17, 18,
-            18, 19, 16,
-            22, 21, 20,
-            20, 23, 22,
-            /*27,25,24,
-            24,26,27,
-            31,29,25,
-            25,27,31,
-            24,25,29,
-            29,28,24,
-            30,31,27,
-            27,26,30,
-            26,24,28,
-            28,30,26*/
-        /*];
-
-        this.normals = [
-            // Front
-             0,  0,  1,  
-             0,  0,  1,  
-             0,  0,  1,  
-             0,  0,  1,  
-
-            // Back
-             0,  0, -1,  
-             0,  0, -1,  
-             0,  0, -1,  
-             0,  0, -1,  
-
-            // Left
-            -1,  0,  0,  
-            -1,  0,  0,  
-            -1,  0,  0,  
-            -1,  0,  0,  
-
-            // Right
-             1,  0,  0,  
-             1,  0,  0,  
-             1,  0,  0,  
-             1,  0,  0,  
-
-            // Bottom
-             0, -1,  0,  
-             0, -1,  0,  
-             0, -1,  0,  
-             0, -1,  0,  
-
-            // Top
-             0,  1,  0,  
-             0,  1,  0,  
-             0,  1,  0,  
-             0,  1,  0  
-        ];
-    
-        this.primitiveType = this.scene.gl.TRIANGLES;
-        this.initGLBuffers();
-    }*/
-    
-
     display() {
-        //super.display();
+        this.scene.pushMatrix();
+        this.scene.translate(2, -1, 0);
+        this.scene.rotate(Math.PI * (3/2), 0, 1, 0);
+        this.landingGearMaterial.apply();
         this.rightLeg.display();
-        
+        this.leftLeg.display();
+        this.mainBase.display();
+        this.scene.popMatrix();
+               
     }
 
 }

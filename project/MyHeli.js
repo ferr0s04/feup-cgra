@@ -34,7 +34,8 @@ export class MyHeli extends CGFobject {
     }
 
     initElements() {
-        this.landingGear = new MyLandingGear(this.scene);
+        this.landingGearL = new MyLandingGear(this.scene);
+        this.landingGearR = new MyLandingGear(this.scene);
         this.body = new MyHeliBody(this.scene);
         this.tail = new MyHeliTail(this.scene);
         this.bucket = new MyHeliBucket(this.scene);
@@ -179,7 +180,7 @@ export class MyHeli extends CGFobject {
 
     reset() {
         this.x = this.heliportX;
-        this.y = this.heliportY;
+        this.y = this.heliportY+0.8;
         this.z = this.heliportZ;
     
         this.velX = 0;
@@ -211,14 +212,29 @@ export class MyHeli extends CGFobject {
 
     display() {
         this.scene.pushMatrix();
-        this.scene.translate(this.x + 1.75, this.y, this.z - 3);
+        this.scene.translate(this.x + 1.8, this.y-0.2, this.z - 3);
         this.scene.rotate(this.orientationY + Math.PI / 2, 0, 1, 0);
         this.scene.rotate(this.tiltAngle, 0, 0, 1);
         this.scene.scale(0.75, 0.75, 0.75);
-        //this.landingGear.display();
         this.body.display();
         this.tail.display(this.bladeAngle);
         this.bucket.display();
+        this.scene.popMatrix();
+
+        this.scene.pushMatrix();
+        this.scene.translate(this.x + 0.75, this.y, this.z - 3);
+        this.scene.rotate(this.orientationY + Math.PI / 2, 0, 1, 0);
+        this.scene.rotate(this.tiltAngle, 0, 0, 1);
+        this.scene.scale(0.75, 0.75, 0.75);
+        this.landingGearR.display();
+        this.scene.popMatrix();
+
+        this.scene.pushMatrix();
+        this.scene.translate(this.x + 2.75, this.y, this.z - 3);
+        this.scene.rotate(this.orientationY + Math.PI / 2, 0, 1, 0);
+        this.scene.rotate(this.tiltAngle, 0, 0, 1);
+        this.scene.scale(0.75, 0.75, 0.75);
+        this.landingGearL.display();
         this.scene.popMatrix();
 
         this.scene.pushMatrix();

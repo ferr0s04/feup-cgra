@@ -14,45 +14,46 @@ export class MyCubeSize extends CGFobject {
         this.yf = yf;
         this.zi = zi;
         this.zf = zf;
+        this.initBuffers();
     }
 
     initBuffers() {
         this.vertices = [
             // Front
-            xi, yi, zf,   // 0
-            xf, yi, zf,   // 1
-            xf, yf, zf,   // 2
-            xi, yf, zf,   // 3
+            this.xi, this.yi, this.zf,   // 0
+            this.xf, this.yi, this.zf,   // 1
+            this.xf, this.yf, this.zf,   // 2
+            this.xi, this.yf, this.zf,   // 3
 
             // Back
-            xi, yi, zi,  // 4
-            xf, yi, zi,  // 5
-            xf, yf, zi,  // 6
-            xi, yf, zi,  // 7
+            this.xi, this.yi, this.zi,  // 4
+            this.xf, this.yi, this.zi,  // 5
+            this.xf, this.yf, this.zi,  // 6
+            this.xi, this.yf, this.zi,  // 7
 
             // Left
-            xi, yi, zi,  // 8
-            xi, yi, zf,  // 9
-            xi, yf, zf,  // 10
-            xi, yf, zi,  // 11
+            this.xi, this.yi, this.zi,  // 8
+            this.xi, this.yi, this.zf,  // 9
+            this.xi, this.yf, this.zf,  // 10
+            this.xi, this.yf, this.zi,  // 11
 
             // Right
-            xf, yi, zi,  // 12
-            xf, yi, zf,  // 13
-            xf, yf, zf,  // 14
-            xf, yf, zi,  // 15
+            this.xf, this.yi, this.zi,  // 12
+            this.xf, this.yi, this.zf,  // 13
+            this.xf, this.yf, this.zf,  // 14
+            this.xf, this.yf, this.zi,  // 15
 
             // Bottom
-            xi, yi, zi,  // 16
-            xf, yi, zi,  // 17
-            xf, yi, zf,  // 18
-            xi, yi, zf,  // 19
+            this.xi, this.yi, this.zi,  // 16
+            this.xf, this.yi, this.zi,  // 17
+            this.xf, this.yi, this.zf,  // 18
+            this.xi, this.yi, this.zf,  // 19
 
             // Top
-            xi, yf, zi,  // 20
-            xf, yf, zi,  // 21
-            xf, yf, zf,  // 22
-            xi, yf, zf   // 23
+            this.xi, this.yf, this.zi,  // 20
+            this.xf, this.yf, this.zi,  // 21
+            this.xf, this.yf, this.zf,  // 22
+            this.xi, this.yf, this.zf   // 23
         ];
 
 		//Counter-clockwise reference of vertices
@@ -147,8 +148,6 @@ export class MyCubeSize extends CGFobject {
             0, 1
         ];
 
-		//The defined indices (and corresponding vertices)
-		//will be read in groups of three to draw triangles
         this.primitiveType = this.scene.gl.TRIANGLES;
 
         this.initGLBuffers();
