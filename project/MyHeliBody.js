@@ -59,6 +59,8 @@ export class MyHeliBody extends CGFobject {
 
 	display() {
         this.heliWindows.apply();
+        this.scene.pushMatrix();
+        this.scene.translate(-4, 0, -2);
 		this.front1.display();
 		this.front2.display();
         this.front6.display();
@@ -96,15 +98,16 @@ export class MyHeliBody extends CGFobject {
         this.back7.display();
         this.back8.display();
         this.back9.display();
+        this.scene.popMatrix();
 
         this.scene.pushMatrix();
-        this.scene.translate(3, 4, 1.5);
+        this.scene.translate(-1, 4, -0.5);
         this.scene.scale(2, 0.6, 1);
         this.topBase.display();
         this.scene.popMatrix();
 
         this.scene.pushMatrix();
-        this.scene.translate(3.9, 4.6, 2.1);
+        this.scene.translate(-0.1, 4.6, 0.1);
         this.scene.rotate(-Math.PI / 2, 1, 0, 0);
         this.scene.scale(0.2, 0.2, 0.5);
         this.topSupport.display();

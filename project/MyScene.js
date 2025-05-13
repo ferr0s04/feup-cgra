@@ -95,37 +95,50 @@ export class MyScene extends CGFscene {
   checkKeys() {
     let keysPressed = false;
   
-    if (this.gui.isKeyPressed("KeyA")) {
-      this.heli.turn(-0.05 * this.speedFactor);
-      keysPressed = true;
-    }
-
-    if (this.gui.isKeyPressed("KeyD")) {
-        this.heli.turn(0.05 * this.speedFactor);
-        keysPressed = true;
-    }
-
     if (this.gui.isKeyPressed("KeyW")) {
-        this.heli.accelerate(0.01 * this.speedFactor);
-        keysPressed = true;
+      this.heli.setTilt(true);
+    }
+    else if (this.gui.isKeyPressed("KeyS")) {
+      this.heli.setTilt(false);
+    }
+    else {
+      this.heli.setTilt(null);
     }
 
-    if (this.gui.isKeyPressed("KeyS")) {
-        this.heli.accelerate(-0.01 * this.speedFactor);
+    if (this.heli.state !== "idle") {
+      if (this.gui.isKeyPressed("KeyD")) {
+        this.heli.turn(-0.05 * this.speedFactor);
         keysPressed = true;
-    }
+      }
 
-    if (this.gui.isKeyPressed("KeyR")) {
-      this.heli.reset();
-      console.log("Eagle has returned to base.");
+      if (this.gui.isKeyPressed("KeyA")) {
+          this.heli.turn(0.05 * this.speedFactor);
+          keysPressed = true;
+      }
+
+      if (this.gui.isKeyPressed("KeyW")) {
+          this.heli.accelerate(0.01 * this.speedFactor);
+          keysPressed = true;
+      }
+
+      if (this.gui.isKeyPressed("KeyS")) {
+          this.heli.accelerate(-0.01 * this.speedFactor);
+          keysPressed = true;
+      }
+
+      if (this.gui.isKeyPressed("KeyR")) {
+        this.heli.reset();
+        console.log("Eagle has returned to base.");
+      }
+
+          
+      if (this.gui.isKeyPressed("KeyL")) {
+          this.heli.startLanding();
+      }
     }
 
     if (this.gui.isKeyPressed("KeyP")) {
       this.heli.startTakeOff();
-    }
-    
-    if (this.gui.isKeyPressed("KeyL")) {
-        this.heli.startLanding();
     }
   
     //if (keysPressed)
@@ -191,7 +204,7 @@ export class MyScene extends CGFscene {
       this.heli.display();
       this.popMatrix();
     }
-    //if (this.landing) this.landing.display();
+    if (this.landing) this.landing.display();
 
   }
 }

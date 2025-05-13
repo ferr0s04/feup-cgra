@@ -1,12 +1,14 @@
 import {CGFobject} from '../lib/CGF.js';
+import { MyCubeSize } from './MyCubeSize.js';
 
 export class MyLandingGear extends CGFobject {
     constructor(scene) {
         super(scene);
-        this.initBuffers();
+        //this.initBuffers();
+        //this.rightLeg = new MyCubeSize(scene, 0, 0.3, 0.25, 0.55, 0.5, 0.8);
     }
 
-    initBuffers() { 
+    /*initBuffers() { 
         this.vertices = [
             0, 0, 5,   // 0
             0.3, 0, 5,   // 1
@@ -31,8 +33,18 @@ export class MyLandingGear extends CGFobject {
             0, 0.25, 0,  // 20
             0.3, 0.25, 0,  // 21
             0.3, 0.25, 5,  // 22
-            0, 0.25, 5   // 23
-        ];
+            0, 0.25, 5,   // 23
+
+            /*0, 0.55, 0.5,    // 24
+            0.3, 0.55, 0.5,     // 25
+            0, 0.55, 0.8,     // 26
+            0.3, 0.55, 0.8,    // 27
+
+            0, 0.25, 0.5,    // 28
+            0.3, 0.25, 0.5,     // 29
+            0, 0.25, 0.8,     // 30
+            0.3, 0.25, 0.8,    // 31*/
+        /*];
 
 		//Counter-clockwise reference of vertices
         this.indices = [
@@ -47,8 +59,18 @@ export class MyLandingGear extends CGFobject {
             16, 17, 18,
             18, 19, 16,
             22, 21, 20,
-            20, 23, 22
-        ];
+            20, 23, 22,
+            /*27,25,24,
+            24,26,27,
+            31,29,25,
+            25,27,31,
+            24,25,29,
+            29,28,24,
+            30,31,27,
+            27,26,30,
+            26,24,28,
+            28,30,26*/
+        /*];
 
         this.normals = [
             // Front
@@ -85,20 +107,18 @@ export class MyLandingGear extends CGFobject {
              0,  1,  0,  
              0,  1,  0,  
              0,  1,  0,  
-             0,  1,  0   
+             0,  1,  0  
         ];
     
         this.primitiveType = this.scene.gl.TRIANGLES;
         this.initGLBuffers();
-    }
+    }*/
     
 
     display() {
-        this.scene.pushMatrix();
-        this.scene.translate(20, 1, 0); // move to be in front of camera
-        super.display();
-        this.scene.popMatrix();
-
-      }
+        //super.display();
+        this.rightLeg.display();
+        
+    }
 
 }

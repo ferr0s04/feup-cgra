@@ -1,8 +1,8 @@
 import { CGFobject, CGFappearance } from '../lib/CGF.js';
-import { MyOval } from './MyOval.js';
 import { MyHeliBody } from './MyHeliBody.js';
 import { MyLandingGear } from './MyLandingGear.js';
 import { MyHeliTail } from './MyHeliTail.js';
+import { MyHeliBucket } from './MyHeliBucket.js';
 
 export class MyHeli extends CGFobject {
     constructor(scene, x, y, z, velX, velY, velZ, heliportX, heliportY, heliportZ, orientationY = 0) {
@@ -23,8 +23,10 @@ export class MyHeli extends CGFobject {
         this.heliportX = heliportX;
         this.heliportY = heliportY;
         this.heliportZ = heliportZ;
+        this.bucketDisplayed = false;
         this.bucketEmpty = true;
         this.bladeAngle = 0;
+        this.tiltAngle = 0;
 
         this.heliAudio = document.getElementById("heli-sound");
 
@@ -35,6 +37,7 @@ export class MyHeli extends CGFobject {
         this.landingGear = new MyLandingGear(this.scene);
         this.body = new MyHeliBody(this.scene);
         this.tail = new MyHeliTail(this.scene);
+        this.bucket = new MyHeliBucket(this.scene);
     }
 
     turn(v) {
@@ -108,6 +111,7 @@ export class MyHeli extends CGFobject {
                     this.y = 2;
                     this.velY = 0;
                     this.state = "cruising";
+                    this.bucketDisplayed = true;
                 } else if (this.overHeliport() && this.y <= this.heliportY) {
                     this.y = this.heliportY;
                     this.velY = 0;
@@ -174,25 +178,52 @@ export class MyHeli extends CGFobject {
     }    
 
     reset() {
-        this.x = 0;
-        this.y = 0;
-        this.z = 0;
+        this.x = this.heliportX;
+        this.y = this.heliportY;
+        this.z = this.heliportZ;
     
         this.velX = 0;
         this.velY = 0;
         this.velZ = 0;
     
         this.orientationY = 0;
-    }    
+
+        this.state = "idle";
+    }
+
+    setTilt(forward) {
+        const maxTilt = Math.PI / 18;
+        const tiltSpeed = Math.PI / 72;
+
+        if (forward === true) {
+            this.tiltAngle = Math.min(this.tiltAngle + tiltSpeed, maxTilt);
+        } else if (forward === false) {
+            this.tiltAngle = Math.max(this.tiltAngle - tiltSpeed, -maxTilt);
+        } else {
+            // Volta gradualmente ao zero
+            if (this.tiltAngle > 0) {
+                this.tiltAngle = Math.max(0, this.tiltAngle - tiltSpeed);
+            } else if (this.tiltAngle < 0) {
+                this.tiltAngle = Math.min(0, this.tiltAngle + tiltSpeed);
+            }
+        }
+    }
 
     display() {
         this.scene.pushMatrix();
-        this.scene.translate(this.x, this.y, this.z);
+        this.scene.translate(this.x + 1.75, this.y, this.z - 3);
         this.scene.rotate(this.orientationY + Math.PI / 2, 0, 1, 0);
+        this.scene.rotate(this.tiltAngle, 0, 0, 1);
         this.scene.scale(0.75, 0.75, 0.75);
-        this.landingGear.display();
+        //this.landingGear.display();
         this.body.display();
         this.tail.display(this.bladeAngle);
+        this.bucket.display();
+        this.scene.popMatrix();
+
+        this.scene.pushMatrix();
+        this.scene.translate(10, 0, 10);
+        this.bucket.display();
         this.scene.popMatrix();
     }
 
