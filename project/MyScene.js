@@ -1,10 +1,11 @@
-import { CGFscene, CGFcamera, CGFaxis, CGFappearance, CGFtexture } from "../lib/CGF.js";
+import { CGFscene, CGFcamera, CGFaxis, CGFappearance, CGFtexture, CGFshader } from "../lib/CGF.js";
 import { MyPlane } from "./MyPlane.js";
 import { MyPanorama } from "./MyPanorama.js";
 import { MyBuilding } from "./MyBuilding.js";
 import { MyForest } from "./MyForest.js";
-import { MyLandingGear } from "./MyLandingGear.js";
 import { MyHeli } from "./MyHeli.js";
+import { MyLake } from "./MyLake.js";
+
 
 /**
  * MyScene
@@ -14,6 +15,7 @@ export class MyScene extends CGFscene {
   constructor() {
     super();
     this.heliSound = document.getElementById("heli-sound");
+    this.heliPOV = false;
   }
 
   init(application) {
@@ -58,21 +60,35 @@ export class MyScene extends CGFscene {
     this.speedFactor = 1.0;
     
     this.heli = new MyHeli(this,
-      -this.building.centralWidth + this.building.totalWidth / 6 - 1.5,
+      -this.building.centralWidth + this.building.totalWidth / 6,
       this.building.centralFloors * 2.5 + 0.8,
-      -50 + this.building.depth - 1.5,
+      -50 + this.building.depth,
       0, 0, 0,
-      -this.building.centralWidth + this.building.totalWidth / 6 - 1.5,
-      this.building.centralFloors * 2.5,
-      -50 + this.building.depth - 1.5);
+      -this.building.centralWidth + this.building.totalWidth / 6,
+      this.building.centralFloors * 2.5 + 0.8,
+      -50 + this.building.depth);
   
 
     //this.forest = new MyForest(this, 1, 1, 30, 30, true); // Floresta com 1 árvore de teste
-    this.forest = new MyForest(this, 7, 8, 45, 45, true, 20); // normal - 3 variedades
+    this.forest = new MyForest(this, 6, 13, 120, 50, true, 20); // normal - 3 variedades
     //this.forest = new MyForest(this, 20, 20, 200, 200, true, 60); // huge forest
     //this.forest = new MyForest(this, 3, 4, 40, 40, true, 2); // less variety
 
-    this.landing = new MyLandingGear(this);
+    this.waterAppearance = new CGFappearance(this);
+    this.waterAppearance.setAmbient(0.3, 0.3, 0.3, 1);
+    this.waterAppearance.setDiffuse(0.7, 0.7, 0.7, 1);
+    this.waterAppearance.setSpecular(0.0, 0.0, 0.0, 1);
+    this.waterAppearance.setShininess(120);
+
+    this.textureWater = new CGFtexture(this, "textures/waterTex.jpg");
+    this.textureMask = new CGFtexture(this, "textures/lake_mask.png");
+    this.waterAppearance.setTexture(this.textureWater);
+    this.waterAppearance.setTextureWrap('REPEAT', 'REPEAT');
+    this.waterShader = new CGFshader(this.gl, "shaders/water.vert", "shaders/water.frag");
+    this.waterShader.setUniformsValues({ uSampler: 0, uSampler2: 1, uMask: 2, normScale: 16.0, timeFactor: 0 });
+
+    this.lake = new MyLake(this, 200);
+
   }
 
   initLights() {
@@ -144,9 +160,35 @@ export class MyScene extends CGFscene {
     }
   
   update(t) {
-    this.checkKeys();
-    this.heli.update(t);
-  }  
+      this.checkKeys();
+      this.heli.update(t);
+
+      if (this.heliPOV) {
+          const distance = 20;
+          const height = 15;
+          
+          // Account for helicopter's display offset
+          const heliCenterX = this.heli.x;
+          const heliCenterY = this.heli.y - 0.2;
+          const heliCenterZ = this.heli.z - 4.5;
+          
+          // Calculate camera position based on helicopter's actual center
+          const cameraX = heliCenterX - distance * Math.sin(this.heli.orientationY);
+          const cameraY = heliCenterY + height;
+          const cameraZ = heliCenterZ - distance * Math.cos(this.heli.orientationY);
+          
+          // Look at point slightly ahead of helicopter's center
+          const lookAtX = heliCenterX + 2 * Math.sin(this.heli.orientationY);
+          const lookAtY = heliCenterY + 1;
+          const lookAtZ = heliCenterZ + 2 * Math.cos(this.heli.orientationY);
+          
+          this.camera.setPosition(vec3.fromValues(cameraX, cameraY, cameraZ));
+          this.camera.setTarget(vec3.fromValues(lookAtX, lookAtY, lookAtZ));
+      }
+    this.cameraX = this.camera.position[0];
+    this.cameraZ = this.camera.position[2];
+    this.time = t;
+  }
 
   setDefaultAppearance() {
     this.setAmbient(0.5, 0.5, 0.5, 1.0);
@@ -181,7 +223,7 @@ export class MyScene extends CGFscene {
 
     this.grassTexture.apply();
     this.pushMatrix();
-    this.scale(100, 100, 100);
+    this.scale(400, 400, 400);
     this.rotate(-90 * Math.PI / 180, 1, 0, 0);
     this.plane.display();
     this.popMatrix();
@@ -194,8 +236,30 @@ export class MyScene extends CGFscene {
       this.popMatrix();
     }
 
-    if (this.forest) this.forest.display();
+
+    if (this.forest) {
+      this.pushMatrix();
+      this.translate(0, 0, 50);
+      this.forest.display();
+      this.popMatrix();
+    }
 
     if (this.heli) this.heli.display();
+
+    if (this.lake){
+      this.setActiveShader(this.waterShader);
+      this.waterAppearance.apply();
+      this.textureMask.bind(2);
+      this.pushMatrix();
+      this.translate(70, -0.8, -10);
+      this.rotate(-Math.PI / 2, 1, 0, 0);
+      this.scale(70, 70, 20);
+      this.lake.display();
+      this.popMatrix();
+
+
+      this.setActiveShader(this.defaultShader);
+    }
+
   }
 }

@@ -1,6 +1,6 @@
 import { CGFobject, CGFappearance } from '../lib/CGF.js';
 import { MyHeliBody } from './MyHeliBody.js';
-import { MyLandingGear } from './MyLandingGear.js';
+import { MyFullLandingGear } from './MyFullLandingGear.js';
 import { MyHeliTail } from './MyHeliTail.js';
 import { MyHeliBucket } from './MyHeliBucket.js';
 
@@ -18,8 +18,17 @@ export class MyHeli extends CGFobject {
 
         this.state = "idle"; // ['idle', 'takingOff', 'cruising', 'descending', 'landing', 'goingToHeliport']
         this.cruiseAltitude = 30;
-        this.lakeX = 20; // posição do lago
-        this.lakeZ = 20;
+        this.lakeArea = {
+            centerX: 70,
+            centerZ: -10,
+            width: 70,
+            height: 70,
+            // These define the actual lake shape within the square
+            validAreas: [
+                { x1: 45, z1: -35, x2: 95, z2: -25 },  // Bottom wide part
+                { x1: 55, z1: -25, x2: 85, z2: 15 }    // Upper narrow part
+            ]
+        };
         this.heliportX = heliportX;
         this.heliportY = heliportY;
         this.heliportZ = heliportZ;
@@ -34,8 +43,7 @@ export class MyHeli extends CGFobject {
     }
 
     initElements() {
-        this.landingGearL = new MyLandingGear(this.scene);
-        this.landingGearR = new MyLandingGear(this.scene);
+        this.fullLanding = new MyFullLandingGear(this.scene);
         this.body = new MyHeliBody(this.scene);
         this.tail = new MyHeliTail(this.scene);
         this.bucket = new MyHeliBucket(this.scene);
@@ -44,12 +52,14 @@ export class MyHeli extends CGFobject {
     turn(v) {
         this.orientationY += v;
     
-        // Calcula a norma da velocidade atual
-        const speed = Math.sqrt(this.velX**2 + this.velY**2 + this.velZ**2);
-    
-        // Atualiza a direção com base na nova orientação
-        this.velX = speed * Math.sin(this.orientationY);
-        this.velZ = speed * Math.cos(this.orientationY);
+        // Calcula a norma da velocidade atual no plano XZ
+        const speed = Math.sqrt(this.velX**2 + this.velZ**2);
+        
+        if (speed > 0) {
+            // Atualiza a direção com base na nova orientação
+            this.velX = speed * Math.sin(this.orientationY);
+            this.velZ = speed * Math.cos(this.orientationY);
+        }
     }
 
     accelerate(v) {
@@ -171,7 +181,14 @@ export class MyHeli extends CGFobject {
     }    
 
     overLake() {
-        return Math.abs(this.x - this.lakeX) < 2 && Math.abs(this.z - this.lakeZ) < 2;
+        // Check if point is within any of the valid lake areas
+        for (const area of this.lakeArea.validAreas) {
+            if (this.x >= area.x1 && this.x <= area.x2 && 
+                this.z >= area.z1 && this.z <= area.z2) {
+                return true;
+            }
+        }
+        return false;
     }
     
     overHeliport() {
@@ -180,7 +197,7 @@ export class MyHeli extends CGFobject {
 
     reset() {
         this.x = this.heliportX;
-        this.y = this.heliportY+0.8;
+        this.y = this.heliportY;
         this.z = this.heliportZ;
     
         this.velX = 0;
@@ -212,35 +229,19 @@ export class MyHeli extends CGFobject {
 
     display() {
         this.scene.pushMatrix();
-        this.scene.translate(this.x + 1.8, this.y-0.2, this.z - 3);
+        this.scene.translate(this.x, this.y-0.2, this.z - 4.5);
         this.scene.rotate(this.orientationY + Math.PI / 2, 0, 1, 0);
         this.scene.rotate(this.tiltAngle, 0, 0, 1);
         this.scene.scale(0.75, 0.75, 0.75);
         this.body.display();
         this.tail.display(this.bladeAngle);
-        this.bucket.display();
+        this.fullLanding.display();
+        if (this.overLake()) {
+            this.bucket.display();
+        }
         this.scene.popMatrix();
 
-        this.scene.pushMatrix();
-        this.scene.translate(this.x + 0.75, this.y, this.z - 3);
-        this.scene.rotate(this.orientationY + Math.PI / 2, 0, 1, 0);
-        this.scene.rotate(this.tiltAngle, 0, 0, 1);
-        this.scene.scale(0.75, 0.75, 0.75);
-        this.landingGearR.display();
-        this.scene.popMatrix();
-
-        this.scene.pushMatrix();
-        this.scene.translate(this.x + 2.75, this.y, this.z - 3);
-        this.scene.rotate(this.orientationY + Math.PI / 2, 0, 1, 0);
-        this.scene.rotate(this.tiltAngle, 0, 0, 1);
-        this.scene.scale(0.75, 0.75, 0.75);
-        this.landingGearL.display();
-        this.scene.popMatrix();
-
-        this.scene.pushMatrix();
-        this.scene.translate(10, 0, 10);
-        this.bucket.display();
-        this.scene.popMatrix();
+        
     }
 
 }

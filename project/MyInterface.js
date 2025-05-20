@@ -15,6 +15,7 @@ export class MyInterface extends CGFinterface {
         this.gui = new dat.GUI();
     
         this.gui.add(this.scene, 'speedFactor', 0.1, 3).name('Speed Factor');
+        this.gui.add(this.scene, 'heliPOV').name('Helicopter POV');
     
         this.initKeys();
     

@@ -1,5 +1,6 @@
 import { CGFobject } from '../lib/CGF.js';
 import { MyTree } from './MyTree.js';
+import { MyFire } from './MyFire.js';
 
 export class MyForest extends CGFobject {
     constructor(scene, rows, cols, width = 30, depth = 30, useTextures = false, templateCount = 4) {
@@ -26,6 +27,59 @@ export class MyForest extends CGFobject {
         
         this.treeTemplates = this.createTreeTemplates(this.templateCount);
         this.treeInstances = this.createTreeInstances();
+        this.fires = [];
+        this.createFires();
+    }
+
+    createFires() {
+        // First, select a random starting tree
+        const startTreeIndex = Math.floor(Math.random() * this.treeInstances.length);
+        const startTree = this.treeInstances[startTreeIndex];
+        const fireCount = 10 + Math.floor(Math.random() * 3);
+        const usedPositions = new Set([startTreeIndex]);
+        this.fires = [];
+
+        // Create first fire at the starting tree
+        this.fires.push(new MyFire(
+            this.scene,
+            startTree.posX + (Math.random() - 0.5) * 4,
+            startTree.posZ + (Math.random() - 0.5) * 4,
+            0.8 + Math.random() * 1.5
+        ));
+
+        // Find nearby trees for remaining fires
+        for (let i = 1; i < fireCount; i++) {
+            let closestTree = null;
+            let minDistance = Infinity;
+            let selectedIndex = -1;
+
+            // Search for nearby trees that haven't been used
+            for (let j = 0; j < this.treeInstances.length; j++) {
+                if (usedPositions.has(j)) continue;
+
+                const tree = this.treeInstances[j];
+                const dx = tree.posX - startTree.posX;
+                const dz = tree.posZ - startTree.posZ;
+                const distance = Math.sqrt(dx * dx + dz * dz);
+
+                // Only consider trees within a reasonable radius (adjust 15 to control spread)
+                if (distance < 15 && distance < minDistance) {
+                    minDistance = distance;
+                    closestTree = tree;
+                    selectedIndex = j;
+                }
+            }
+
+            if (closestTree) {
+                usedPositions.add(selectedIndex);
+                this.fires.push(new MyFire(
+                    this.scene,
+                    closestTree.posX + (Math.random() - 0.5) * 2,
+                    closestTree.posZ + (Math.random() - 0.5) * 2,
+                    0.8 + Math.random() * 1.5
+                ));
+            }
+        }
     }
     
     createTreeTemplates(count) {
@@ -111,6 +165,11 @@ export class MyForest extends CGFobject {
             template.display();
             
             this.scene.popMatrix();
+        }
+
+        for (const fire of this.fires) {
+            fire.update(this.scene.time);
+            fire.display();
         }
     }
 }
