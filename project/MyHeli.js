@@ -118,13 +118,13 @@ export class MyHeli extends CGFobject {
                     }
                 }
             
-                if (this.overLake() && this.y <= 2) {
-                    this.y = 2;
+                if (this.overLake() && this.y-0.8 <= 2) {
+                    this.y = 2.8;
                     this.velY = 0;
                     this.state = "cruising";
                     this.bucketDisplayed = true;
-                } else if (this.overHeliport() && this.y <= this.heliportY) {
-                    this.y = this.heliportY;
+                } else if (this.overHeliport() && this.y-0.8 <= this.heliportY) {
+                    this.y = this.heliportY + 0.8;
                     this.velY = 0;
                     this.state = "idle";
                 }

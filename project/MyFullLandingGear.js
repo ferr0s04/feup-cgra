@@ -11,12 +11,12 @@ export class MyFullLandingGear extends CGFobject {
 
     display() {
         this.scene.pushMatrix();
-        this.scene.translate(-1.05, 0, 0);
+        this.scene.translate(0,0.2, 0.8);
         this.landingGearR.display();
         this.scene.popMatrix();
 
         this.scene.pushMatrix();
-        this.scene.translate(0.95, 0, 0);
+        this.scene.translate(0, 0.2, -1);
         this.landingGearL.display();
         this.scene.popMatrix();      
     }
