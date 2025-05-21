@@ -112,13 +112,15 @@ export class MyHeliBucket extends CGFobject {
         this.scene.popMatrix();
 
         // Exibir a água dentro do balde
-        this.scene.pushMatrix();
-        this.scene.translate(0, -6.0, 0);
-        this.scene.rotate(Math.PI, 0, 0, 1);
-        this.scene.scale(0.8, 0.5, 0.8);
-        this.waterTexture.apply();
-        this.water.display();
-        this.scene.popMatrix();
+        if (!this.scene.heli.bucketEmpty) {
+            this.scene.pushMatrix();
+            this.scene.translate(0, -6.0, 0);
+            this.scene.rotate(Math.PI, 0, 0, 1);
+            this.scene.scale(0.8, 0.5, 0.8);
+            this.waterTexture.apply();
+            this.water.display();
+            this.scene.popMatrix();
+        }
 
         // Exibir o cone invertido (cabos)
         this.scene.pushMatrix();

@@ -309,8 +309,5 @@ export class MyHeli extends CGFobject {
             this.bucket.display();
         }
         this.scene.popMatrix();
-
-        
     }
-
 }

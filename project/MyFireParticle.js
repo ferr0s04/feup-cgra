@@ -19,7 +19,7 @@ export class MyFireParticle {
         this.z += this.velZ * deltaTime;
 
         // Deactivate if too low
-        if (this.y > 25) {
+        if (this.y > 15) {
             this.active = false;
         }
     }
