@@ -149,12 +149,22 @@ export class MyScene extends CGFscene {
 
           
       if (this.gui.isKeyPressed("KeyL")) {
-          this.heli.startLanding();
+          if (this.heli.state === "overLake" && this.heli.overLake() && this.heli.y <= 3 && this.heli.velY === 0 && this.heli.bucketEmpty) {
+              this.heli.startFilling(this.time);
+          } else {
+              this.heli.startLanding();
+          }
       }
     }
 
     if (this.gui.isKeyPressed("KeyP")) {
-      this.heli.startTakeOff();
+        if (!this.heli.fillingBucket) {
+            this.heli.startTakeOff();
+        }
+    }
+
+    if (this.gui.isKeyPressed("KeyO")) {
+      this.heli.dropRequested = true;
     }
   
     }
@@ -219,8 +229,10 @@ export class MyScene extends CGFscene {
 
     this.setDefaultAppearance();
     
+    // Panorama
     if (this.panorama) this.panorama.display();    
 
+    // Grass
     this.grassTexture.apply();
     this.pushMatrix();
     this.scale(400, 400, 400);
@@ -228,7 +240,7 @@ export class MyScene extends CGFscene {
     this.plane.display();
     this.popMatrix();
 
-    // Make the building appear in the default position
+    // Building
     if (this.building) {
       this.pushMatrix();
       this.translate(-this.building.centralWidth, 0, -50);
@@ -236,17 +248,11 @@ export class MyScene extends CGFscene {
       this.popMatrix();
     }
 
+    // Forest
+    if (this.forest) this.forest.display();
 
-    if (this.forest) {
-      this.pushMatrix();
-      this.translate(0, 0, 50);
-      this.forest.display();
-      this.popMatrix();
-    }
-
-    if (this.heli) this.heli.display();
-
-    if (this.lake){
+    // Lake
+    if (this.lake) {
       this.setActiveShader(this.waterShader);
       this.waterAppearance.apply();
       this.textureMask.bind(2);
@@ -256,10 +262,10 @@ export class MyScene extends CGFscene {
       this.scale(70, 70, 20);
       this.lake.display();
       this.popMatrix();
-
-
       this.setActiveShader(this.defaultShader);
     }
 
+    // Helicopter
+    if (this.heli) this.heli.display();
   }
 }

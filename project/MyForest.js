@@ -11,6 +11,8 @@ export class MyForest extends CGFobject {
         this.depth = depth;
         this.useTextures = useTextures;
         this.templateCount = templateCount;
+        this.forestX = 0;
+        this.forestZ = 50;
         
         // Texturas do tronco
         this.trunkTextures = [
@@ -31,20 +33,33 @@ export class MyForest extends CGFobject {
         this.createFires();
     }
 
+    checkFireExtinguish(x, z, range) {
+        for (let i = this.fires.length - 1; i >= 0; i--) {
+            const fire = this.fires[i];
+            const dx = fire.x - x;
+            const dz = fire.z - z;
+            const distance = Math.sqrt(dx * dx + dz * dz);
+
+            if (distance < range) {
+                this.fires.splice(i, 1);
+            }
+        }
+    }
+
     createFires() {
         // First, select a random starting tree
         const startTreeIndex = Math.floor(Math.random() * this.treeInstances.length);
         const startTree = this.treeInstances[startTreeIndex];
-        const fireCount = 10 + Math.floor(Math.random() * 3);
+        const fireCount = 15 + Math.floor(Math.random() * 3);
         const usedPositions = new Set([startTreeIndex]);
         this.fires = [];
 
         // Create first fire at the starting tree
         this.fires.push(new MyFire(
             this.scene,
-            startTree.posX + (Math.random() - 0.5) * 4,
-            startTree.posZ + (Math.random() - 0.5) * 4,
-            0.8 + Math.random() * 1.5
+            startTree.posX + (Math.random() - 0.5) * 5,
+            startTree.posZ + (Math.random() - 0.5) * 5,
+            3.5 + Math.random() * 2.0
         ));
 
         // Find nearby trees for remaining fires
@@ -74,9 +89,9 @@ export class MyForest extends CGFobject {
                 usedPositions.add(selectedIndex);
                 this.fires.push(new MyFire(
                     this.scene,
-                    closestTree.posX + (Math.random() - 0.5) * 2,
-                    closestTree.posZ + (Math.random() - 0.5) * 2,
-                    0.8 + Math.random() * 1.5
+                    closestTree.posX + (Math.random() - 0.5) * 6,
+                    closestTree.posZ + (Math.random() - 0.5) * 6,
+                    2.0 + Math.random() * 1.5
                 ));
             }
         }
@@ -156,20 +171,24 @@ export class MyForest extends CGFobject {
     }
 
     display() {
+        this.scene.pushMatrix();
+        this.scene.translate(0, 0, this.forestZ);
+        // Display trees
         for (const instance of this.treeInstances) {
             this.scene.pushMatrix();
             this.scene.translate(instance.posX, 0, instance.posZ);
-            
-            // Get the template tree and display it
             const template = this.treeTemplates[instance.templateIndex];
             template.display();
-            
             this.scene.popMatrix();
         }
 
+        // Display fires
+        this.scene.setDefaultAppearance(); // Reset appearance before drawing fires
         for (const fire of this.fires) {
             fire.update(this.scene.time);
             fire.display();
         }
+
+        this.scene.popMatrix();
     }
 }

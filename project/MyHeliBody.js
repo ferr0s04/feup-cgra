@@ -1,7 +1,6 @@
 import { CGFobject, CGFappearance } from '../lib/CGF.js';
 import { MyQuad } from './MyQuad.js';
 import { MyCube } from './MyCube.js';
-import { MyCylinder } from './MyCylinder.js';
 
 export class MyHeliBody extends CGFobject {
 	constructor(scene) {

@@ -36,6 +36,11 @@ export class MyHeli extends CGFobject {
         this.bucketEmpty = true;
         this.bladeAngle = 0;
         this.tiltAngle = 0;
+        this.dropRequested = false;
+        this.fillingBucket = false;
+        this.fillingStartTime = 0;
+        this.fillingDuration = 2000;
+        this.bucketDropTime = 0;
 
         this.heliAudio = document.getElementById("heli-sound");
 
@@ -106,25 +111,28 @@ export class MyHeli extends CGFobject {
     
             case "descending":
                 this.y += this.velY * dt;
-            
+
                 // Gradually rotate to orientationY = 0
                 if (Math.abs(this.orientationY) > 0.01) {
                     const rotationSpeed = 1.0; // radians per second
                     this.orientationY -= Math.sign(this.orientationY) * rotationSpeed * dt;
-            
-                    // Clamp to 0 if we're close
                     if (Math.abs(this.orientationY) < 0.01) {
                         this.orientationY = 0;
                     }
                 }
-            
-                if (this.overLake() && this.y-0.8 <= 2) {
-                    this.y = 2.8;
+
+                if (this.overLake() && this.y-0.8 <= 4) {
+                    this.y = 4.8;
                     this.velY = 0;
-                    this.state = "cruising";
+                    this.state = "overLake";
                     this.bucketDisplayed = true;
-                } else if (this.overHeliport() && this.y-0.8 <= this.heliportY) {
-                    this.y = this.heliportY + 0.8;
+                    // Start filling automatically if bucket is empty and not already filling
+                    if (this.bucketEmpty && !this.fillingBucket) {
+                        this.fillingBucket = true;
+                        this.fillingStartTime = t;
+                    }
+                } else if (this.overHeliport() && this.y <= this.heliportY) {
+                    this.y = this.heliportY;
                     this.velY = 0;
                     this.state = "idle";
                 }
@@ -158,6 +166,55 @@ export class MyHeli extends CGFobject {
                 this.y += this.velY * dt;
                 this.z += this.velZ * dt;
         }
+
+        if (this.state === "cruising" && !this.bucketEmpty && this.dropRequested) {
+            const fires = this.scene.forest.fires;
+            let overFire = false;
+
+            for (const fire of fires) {
+                const dx = fire.x - this.x + this.scene.forest.forestX;
+                const dz = fire.z - this.z + this.scene.forest.forestZ;
+                const distance = Math.sqrt(dx * dx + dz * dz);
+
+                if (distance < 5) {  // If very close to a fire
+                    overFire = true;
+                    break;
+                }
+            }
+
+            if (overFire) {
+                this.bucket.startDropping(t);
+                this.bucketEmpty = true;
+                this.bucketDropTime = t + this.bucket.dropDuration;
+            }
+            this.dropRequested = false; // Reset flag regardless
+        }
+
+        if (this.fillingBucket) {
+            if (t - this.fillingStartTime >= this.fillingDuration) {
+                this.fillingBucket = false;
+                this.bucketEmpty = false; // Bucket is now full
+                this.state = "ascending";
+                this.velY = 3; // Start going up
+            }
+            // While filling, don't allow movement
+            return;
+        }
+
+        // Add a new ascending state
+        if (this.state === "ascending") {
+            this.y += this.velY * dt;
+            if (this.y >= this.cruiseAltitude) {
+                this.y = this.cruiseAltitude;
+                this.velY = 0;
+                this.state = "cruising";
+            }
+        }
+
+        // Update bucket and particles
+        if (this.bucket) {
+            this.bucket.update(t);
+        }
     }    
 
     startTakeOff() {
@@ -179,6 +236,13 @@ export class MyHeli extends CGFobject {
             }
         }
     }    
+
+    startFilling(t) {
+        if (this.state === "overLake" && this.overLake() && this.bucketEmpty) {
+            this.fillingBucket = true;
+            this.fillingStartTime = t;
+        }
+    }
 
     overLake() {
         // Check if point is within any of the valid lake areas
@@ -236,7 +300,12 @@ export class MyHeli extends CGFobject {
         this.body.display();
         this.tail.display(this.bladeAngle);
         this.fullLanding.display();
-        if (this.overLake()) {
+        const now = Date.now();
+        if (
+            this.overLake() ||
+            !this.bucketEmpty ||
+            (this.bucketDropTime && now < this.bucketDropTime)
+        ) {
             this.bucket.display();
         }
         this.scene.popMatrix();
