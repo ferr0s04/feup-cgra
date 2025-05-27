@@ -20,5 +20,4 @@ export class MyFullLandingGear extends CGFobject {
         this.landingGearL.display();
         this.scene.popMatrix();      
     }
-
 }

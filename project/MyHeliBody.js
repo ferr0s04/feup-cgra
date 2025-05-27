@@ -43,12 +43,14 @@ export class MyHeliBody extends CGFobject {
         this.topBase = new MyCube(scene);
         this.topSupport = new MyCube(scene);
 
+        // Basic helicopter appearance (all red)
         this.heliBasic = new CGFappearance(this.scene);
         this.heliBasic.loadTexture('textures/heli2.png');
         this.heliBasic.setDiffuse(1, 1, 1, 1);
         this.heliBasic.setSpecular(0.1, 0.1, 0.1, 1);
         this.heliBasic.setShininess(10);
 
+        // Helicopter windows appearance
         this.heliWindows = new CGFappearance(this.scene);
         this.heliWindows.loadTexture('textures/heli.png');
         this.heliWindows.setDiffuse(1, 1, 1, 1);

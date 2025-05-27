@@ -1,5 +1,12 @@
 import { CGFobject } from '../lib/CGF.js';
 
+/**
+ * MyQuad
+ * @constructor
+ * @param scene - Reference to MyScene object
+ * @param customVertices - Optional custom vertices for the quad
+ * @param coords - Optional texture coordinates for the quad
+ */
 export class MyQuad extends CGFobject {
 	constructor(scene, customVertices, coords) {
 		super(scene);
@@ -19,6 +26,7 @@ export class MyQuad extends CGFobject {
 
 		const numVertices = this.vertices.length / 3;
 
+		// Triangle or quad support
 		if (numVertices === 3) {
 			this.indices = [0, 1, 2];
 		} else if (numVertices === 4) {

@@ -31,3 +31,7 @@
 - We added sparks and water droplets to add more realism. This doesn't affect performance too much.
 
 ![Screenshot 6](screenshots/project-t02g07-06.png)
+
+- We added dynamic ondulation to the fire but kept the particles.
+
+![Screenshot 7](screenshots/project-t02g07-07.png)

@@ -9,20 +9,21 @@ export class MyHeliBucket extends CGFobject {
     constructor(scene) {
         super(scene);
 
-        this.bucket = new MySphere(scene, 1, 20, 20, false, 0.7); // raio 1, fora visível
-        this.cables = new MyCone(scene, 20, 20); // cone com muitos segmentos para suavidade
+        this.bucket = new MySphere(scene, 1, 20, 20, false, 0.7); // Sphere to represent the bucket (only 70% visible)
+        this.cables = new MyCone(scene, 20, 20); // Cone to represent the bucket cables
         this.water = new MyPolygon(scene, 20);
         this.particleCube = new MyCube(scene);
-        this.extinguishRange = 20; // Range for putting out fires
+        this.extinguishRange = 15; // Range for putting out fires
         this.waterEffect = 8;  // How many units the water particles spread
 
-        // Aparência do balde
+        // Bucket appearance
         this.bucketAppearance = new CGFappearance(scene);
         this.bucketAppearance.setAmbient(0.3, 0.3, 0.3, 1);
         this.bucketAppearance.setDiffuse(0.9, 0.3, 0.1, 1);
         this.bucketAppearance.setSpecular(0.1, 0.1, 0.1, 1);
         this.bucketAppearance.setShininess(10);
 
+        // Water texture appearance (top of the bucket, when filled)
         this.waterTexture = new CGFappearance(this.scene);
         this.waterTexture.loadTexture("textures/waterTex.jpg");
         this.waterTexture.setDiffuse(0.9, 0.9, 0.9, 1);
@@ -30,13 +31,13 @@ export class MyHeliBucket extends CGFobject {
         this.waterTexture.setShininess(10);
         this.waterTexture.setTextureWrap("REPEAT", "REPEAT");
 
-        // Aparência dos cabos (transparente)
+        // Cable appearance (transparent)
         this.cableAppearance = new CGFappearance(scene);
         this.cableAppearance.setAmbient(0.1, 0.1, 0.1, 1);
         this.cableAppearance.setDiffuse(0.9, 0.9, 0.9, 0.5);
         this.cableAppearance.setSpecular(0.1, 0.1, 0.1, 1);
         this.cableAppearance.setShininess(10);
-        this.cableAppearance.loadTexture('textures/cables.png'); // textura com transparência (apenas os fios)
+        this.cableAppearance.loadTexture('textures/cables.png');
         this.cableAppearance.setTextureWrap('CLAMP_TO_EDGE', 'CLAMP_TO_EDGE');
         this.scene.gl.disable(this.scene.gl.CULL_FACE);
 
@@ -46,6 +47,7 @@ export class MyHeliBucket extends CGFobject {
         this.dropDuration = 5000;
         this.lastUpdateTime = 0;
 
+        // Appearance for the water particles
         this.particleAppearance = new CGFappearance(scene);
         this.particleAppearance.setAmbient(0.2, 0.4, 0.8, 1.0);
         this.particleAppearance.setDiffuse(0.2, 0.4, 0.8, 1.0);
@@ -103,7 +105,7 @@ export class MyHeliBucket extends CGFobject {
     }
 
     display() {
-        // Exibir o balde
+        // Bucket
         this.scene.pushMatrix();
         this.scene.translate(0, -6.5, 0);
         this.scene.scale(1, 1.5, 1);
@@ -111,7 +113,7 @@ export class MyHeliBucket extends CGFobject {
         this.bucket.display();
         this.scene.popMatrix();
 
-        // Exibir a água dentro do balde
+        // Water inside the bucket
         if (!this.scene.heli.bucketEmpty) {
             this.scene.pushMatrix();
             this.scene.translate(0, -6.0, 0);
@@ -122,15 +124,15 @@ export class MyHeliBucket extends CGFobject {
             this.scene.popMatrix();
         }
 
-        // Exibir o cone invertido (cabos)
+        // Cables
         this.scene.pushMatrix();
-        this.scene.translate(0, -6.5, 0);  // Levanta o cone acima do balde
-        this.scene.scale(1, 7, 1);  // Esticar para parecer cabos longos
+        this.scene.translate(0, -6.5, 0);  // Cone above the bucket
+        this.scene.scale(1, 7, 1);
         this.cableAppearance.apply();
         this.cables.display();
         this.scene.popMatrix();
 
-        // Exibir a água a cair do balde
+        // Water particles
         this.particleAppearance.apply();
         for (const particle of this.particles) {
             this.scene.pushMatrix();

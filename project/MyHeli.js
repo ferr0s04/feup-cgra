@@ -18,17 +18,6 @@ export class MyHeli extends CGFobject {
 
         this.state = "idle"; // ['idle', 'takingOff', 'cruising', 'descending', 'landing', 'goingToHeliport']
         this.cruiseAltitude = 30;
-        this.lakeArea = {
-            centerX: 70,
-            centerZ: -10,
-            width: 70,
-            height: 70,
-            // These define the actual lake shape within the square
-            validAreas: [
-                { x1: 45, z1: -35, x2: 95, z2: -25 },  // Bottom wide part
-                { x1: 55, z1: -25, x2: 85, z2: 15 }    // Upper narrow part
-            ]
-        };
         this.heliportX = heliportX;
         this.heliportY = heliportY;
         this.heliportZ = heliportZ;
@@ -41,6 +30,7 @@ export class MyHeli extends CGFobject {
         this.fillingStartTime = 0;
         this.fillingDuration = 2000;
         this.bucketDropTime = 0;
+        this.targetOrientationY = this.orientationY;
 
         this.heliAudio = document.getElementById("heli-sound");
 
@@ -112,11 +102,10 @@ export class MyHeli extends CGFobject {
             case "descending":
                 this.y += this.velY * dt;
 
-                // Gradually rotate to orientationY = 0
-                if (Math.abs(this.orientationY) > 0.01) {
-                    const rotationSpeed = 1.0; // radians per second
+                if (!this.overLake() && Math.abs(this.orientationY) > 0.05) {
+                    const rotationSpeed = 1.0;
                     this.orientationY -= Math.sign(this.orientationY) * rotationSpeed * dt;
-                    if (Math.abs(this.orientationY) < 0.01) {
+                    if (Math.abs(this.orientationY) < 0.05) {
                         this.orientationY = 0;
                     }
                 }
@@ -136,30 +125,34 @@ export class MyHeli extends CGFobject {
                     this.velY = 0;
                     this.state = "idle";
                 }
-                break;                
+                break;
     
             case "goingToHeliport":
                 let dx = this.heliportX - this.x;
                 let dz = this.heliportZ - this.z;
-                let dist = Math.sqrt(dx**2 + dz**2); // Distância horizontal no plano XZ
-            
-                if (dist < 0.5) {  // Quando o helicóptero chega ao destino X, Z
-                    // Agora que o helicóptero chegou em X, Z, começamos a descer
-                    this.velX = 0;
-                    this.velZ = 0;
-                    this.state = "descending";
-                    this.velY = -2; // Começa a descer
+                let dist = Math.sqrt(dx**2 + dz**2);
+
+                const angleDiff = this.targetOrientationY - this.orientationY;
+                const rotationSpeed = 1.0 * dt;
+                if (Math.abs(angleDiff) > 0.05) {
+                    this.orientationY += Math.sign(angleDiff) * Math.min(Math.abs(angleDiff), rotationSpeed);
                 } else {
-                    // Move-se horizontalmente em direção ao heliporto
-                    this.velX = (dx / dist) * 5; // Movimento em X
-                    this.velZ = (dz / dist) * 5; // Movimento em Z
-            
-                    this.x += this.velX * dt; // Atualiza a posição em X
-                    this.z += this.velZ * dt; // Atualiza a posição em Z
+                    this.orientationY = this.targetOrientationY;
+
+                    if (dist < 0.5) {  // Arrived at heliport
+                        this.velX = 0;
+                        this.velZ = 0;
+                        this.state = "descending";      
+                        this.velY = -2;
+                    } else {
+                        this.velX = (dx / dist) * 5;
+                        this.velZ = (dz / dist) * 5;
+
+                        this.x += this.velX * dt;
+                        this.z += this.velZ * dt;
+                    }
                 }
                 break;
-                
-                
     
             default: // cruising, idle, etc.
                 this.x += this.velX * dt;
@@ -194,8 +187,6 @@ export class MyHeli extends CGFobject {
             if (t - this.fillingStartTime >= this.fillingDuration) {
                 this.fillingBucket = false;
                 this.bucketEmpty = false; // Bucket is now full
-                this.state = "ascending";
-                this.velY = 3; // Start going up
             }
             // While filling, don't allow movement
             return;
@@ -232,6 +223,10 @@ export class MyHeli extends CGFobject {
                 this.velZ = 0;
                 this.velY = -2;
             } else {
+                // Orient towards the heliport before moving
+                const dx = this.heliportX - this.x;
+                const dz = this.heliportZ - this.z;
+                this.targetOrientationY = Math.atan2(dx, dz); // Angle to heliport
                 this.state = "goingToHeliport";
             }
         }
@@ -245,10 +240,10 @@ export class MyHeli extends CGFobject {
     }
 
     overLake() {
-        // Check if point is within any of the valid lake areas
-        for (const area of this.lakeArea.validAreas) {
-            if (this.x >= area.x1 && this.x <= area.x2 && 
-                this.z >= area.z1 && this.z <= area.z2) {
+        if (!this.lakeValidPoints) return false;
+        // Check if helicopter is close to any valid lake point
+        for (const pt of this.lakeValidPoints) {
+            if (Math.abs(this.x - pt.x) < 1 && Math.abs(this.z - pt.z) < 1) {
                 return true;
             }
         }

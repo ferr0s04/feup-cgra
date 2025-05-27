@@ -2,6 +2,17 @@ import { CGFobject } from '../lib/CGF.js';
 import { MyTree } from './MyTree.js';
 import { MyFire } from './MyFire.js';
 
+/**
+ * MyForest
+ * @constructor
+ * @param scene - Reference to MyScene object
+ * @param rows - Number of rows of trees
+ * @param cols - Number of columns of trees
+ * @param width - Width of the forest area
+ * @param depth - Depth of the forest area
+ * @param useTextures - Whether to use textures for trees
+ * @param templateCount - Number of different unique tree templates to create
+ */
 export class MyForest extends CGFobject {
     constructor(scene, rows, cols, width = 30, depth = 30, useTextures = false, templateCount = 4) {
         super(scene);
@@ -50,7 +61,7 @@ export class MyForest extends CGFobject {
         // First, select a random starting tree
         const startTreeIndex = Math.floor(Math.random() * this.treeInstances.length);
         const startTree = this.treeInstances[startTreeIndex];
-        const fireCount = 15 + Math.floor(Math.random() * 3);
+        const fireCount = 20 + Math.floor(Math.random() * 2);
         const usedPositions = new Set([startTreeIndex]);
         this.fires = [];
 
@@ -78,7 +89,7 @@ export class MyForest extends CGFobject {
                 const distance = Math.sqrt(dx * dx + dz * dz);
 
                 // Only consider trees within a reasonable radius (adjust 15 to control spread)
-                if (distance < 15 && distance < minDistance) {
+                if (distance < 30 && distance < minDistance) {
                     minDistance = distance;
                     closestTree = tree;
                     selectedIndex = j;

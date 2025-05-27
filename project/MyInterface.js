@@ -16,6 +16,8 @@ export class MyInterface extends CGFinterface {
     
         this.gui.add(this.scene, 'speedFactor', 0.1, 3).name('Speed Factor');
         this.gui.add(this.scene, 'heliPOV').name('Helicopter POV');
+        this.gui.add(this.scene, 'isNight').name('Night Mode');
+
     
         this.initKeys();
     
