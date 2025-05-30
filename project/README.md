@@ -2,6 +2,19 @@
 
 ## Group T02G07
 
+| Name           | Number    | E-Mail            |
+| -------------- | --------- | ----------------- |
+| Gonçalo Ferros | 202207592 | up202207592@up.pt |
+| Leonor Couto   | 202205796 | up202205796@up.pt |
+
+## Project Summary
+
+- All requested features were implemented.
+- The helicopter includes sound effects.
+- A night mode was added.
+- The interface also supports a helicopter POV (point-of-view) mode.
+- The fire effect, in addition to the moving triangles as required, features small particles for enhanced realism.
+
 ## Project Notes
 
 - Earth sphere done without problems.
