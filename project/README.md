@@ -35,3 +35,7 @@
 - We added dynamic ondulation to the fire but kept the particles.
 
 ![Screenshot 7](screenshots/project-t02g07-07.png)
+
+- We added, for the additional developments, a shader that allows the trasnsition between the normal heliport and the UP and DOWN to be smoother.
+
+![Screenshot 8](screenshots/project-t02g07-08.png)

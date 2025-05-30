@@ -13,12 +13,11 @@ export class MyWaterParticle {
     }
 
     update(deltaTime) {
-        this.velY -= 9.8 * deltaTime; // Gravity effect
+        this.velY -= 9.8 * deltaTime;
         this.x += this.velX * deltaTime;
         this.y += this.velY * deltaTime;
         this.z += this.velZ * deltaTime;
 
-        // Deactivate if too low
         if (this.y < -40) {
             this.active = false;
         }

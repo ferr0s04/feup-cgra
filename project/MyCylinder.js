@@ -13,7 +13,7 @@ export class MyCylinder extends CGFobject {
         this.indices = [];
         this.normals = [];
 
-        for (let z = 0 ; z <= this.stacks ; z += 1) { // Draw first line - at the end connects to the last line
+        for (let z = 0 ; z <= this.stacks ; z += 1) {
             this.vertices.push(1, 0, z / this.stacks);
             this.normals.push(1, 0, 0);
         }
@@ -36,7 +36,7 @@ export class MyCylinder extends CGFobject {
 
                 let prov = this.vertices.length/3;
 
-                if(i != this.slices) { // The last slice(line) is an exception
+                if(i != this.slices) {
 
                     this.vertices.push(x, y, z);
                     this.normals.push(x/vector, y/vector, 0);
@@ -82,9 +82,7 @@ export class MyCylinder extends CGFobject {
             this.indices.push(centerIndex, index, index + 1);
         }
 
-        // Fecha o círculo da base
         this.indices[this.indices.length - 1] = centerIndex + 1;
-
 
         this.primitiveType = this.scene.gl.TRIANGLES;
         this.initGLBuffers();

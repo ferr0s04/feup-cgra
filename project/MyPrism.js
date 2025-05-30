@@ -12,12 +12,11 @@ export class MyPrism extends CGFobject {
         this.vertices = [];
         this.indices = [];
         this.normals = [];
-        this.texCoords = []; // Added texture coordinates array
+        this.texCoords = [];
 
         let index = 0;
         const zStep = 1 / this.stacks;
 
-        // Pontos fixos da base
         const basePoints = [
             [0, 0], // 0
             [0, 1], // 1
@@ -25,7 +24,6 @@ export class MyPrism extends CGFobject {
             [1, 1]  // 3
         ];
 
-        // Definindo as arestas para faces laterais
         const edges = [
             [0, 1],
             [1, 3],
@@ -33,13 +31,11 @@ export class MyPrism extends CGFobject {
             [2, 0]
         ];
 
-        // Faces laterais
         for (let i = 0; i < edges.length; i++) {
             const [startIdx, endIdx] = edges[i];
             const [x1, y1] = basePoints[startIdx];
             const [x2, y2] = basePoints[endIdx];
 
-            // Vetor normal perpendicular à face
             const dx = x2 - x1;
             const dy = y2 - y1;
             const normalX = -dy;
@@ -52,7 +48,6 @@ export class MyPrism extends CGFobject {
                 const z0 = j * zStep;
                 const z1 = (j + 1) * zStep;
 
-                // Add vertices
                 this.vertices.push(
                     x1, y1, z0,
                     x2, y2, z0,
@@ -60,7 +55,6 @@ export class MyPrism extends CGFobject {
                     x2 + this.offsetX, y2, z1
                 );
 
-                // Add texture coordinates
                 const u0 = x1;
                 const v0 = z0;
                 const u1 = x2;
@@ -72,13 +66,11 @@ export class MyPrism extends CGFobject {
 
                 this.texCoords.push(u0, v0, u1, v1, u2, v2, u3, v3);
 
-                // Add indices
                 this.indices.push(
                     index + 1, index, index + 2,
                     index + 2, index + 3, index + 1
                 );
 
-                // Normais das faces laterais
                 for (let k = 0; k < 4; k++) {
                     this.normals.push(nx, ny, 0);
                 }
@@ -87,16 +79,15 @@ export class MyPrism extends CGFobject {
             }
         }
 
-        // --- Base inferior ---
         const baseCenterIndex = this.vertices.length / 3;
-        this.vertices.push(0.5, 0.5, 0); // centro
+        this.vertices.push(0.5, 0.5, 0);
         this.normals.push(0, 0, -1);
 
         for (let i = 0; i < 4; i++) {
             const [x, y] = basePoints[i];
             this.vertices.push(x, y, 0);
-            this.normals.push(0, 0, -1); // Normal para a base inferior
-            this.texCoords.push(x, y); // Texture coordinates for the base
+            this.normals.push(0, 0, -1);
+            this.texCoords.push(x, y);
         }
 
         this.indices.push(baseCenterIndex, baseCenterIndex + 1, baseCenterIndex + 2);
@@ -104,16 +95,15 @@ export class MyPrism extends CGFobject {
         this.indices.push(baseCenterIndex, baseCenterIndex + 4, baseCenterIndex + 3);
         this.indices.push(baseCenterIndex, baseCenterIndex + 3, baseCenterIndex + 1);
 
-        // --- Base superior ---
         const topCenterIndex = this.vertices.length / 3;
-        this.vertices.push(0.5 + this.offsetX, 0.5, 1); // centro deslocado
+        this.vertices.push(0.5 + this.offsetX, 0.5, 1);
         this.normals.push(0, 0, 1);
 
         for (let i = 0; i < 4; i++) {
             const [x, y] = basePoints[i];
             this.vertices.push(x + this.offsetX, y, 1);
-            this.normals.push(0, 0, 1); // Normal para a base superior
-            this.texCoords.push(x, y); // Texture coordinates for the top base
+            this.normals.push(0, 0, 1);
+            this.texCoords.push(x, y);
         }
 
         this.indices.push(topCenterIndex, topCenterIndex + 2, topCenterIndex + 1);

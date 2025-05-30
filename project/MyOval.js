@@ -19,12 +19,12 @@ export class MyOval extends CGFobject {
 
         // Vertices, normals and texture coordinates
         for (let stack = 0; stack <= this.stacks; stack++) {
-            let theta = Math.PI * stack / this.stacks; // angle from the top
+            let theta = Math.PI * stack / this.stacks;
             let sinTheta = Math.sin(theta);
             let cosTheta = Math.cos(theta);
 
             for (let slice = 0; slice <= this.slices; slice++) {
-                let phi = 2 * Math.PI * slice / this.slices; // Angle for each slice
+                let phi = 2 * Math.PI * slice / this.slices;
                 let sinPhi = Math.sin(phi);
                 let cosPhi = Math.cos(phi);
 
@@ -44,7 +44,6 @@ export class MyOval extends CGFobject {
                 let current = stack * (this.slices + 1) + slice;
                 let next = current + this.slices + 1;
 
-                // Inverting the index order to change the face direction if inside is true
                 if (this.inside === 1) {
                     this.indices.push(current, next + 1, next, current, current + 1, next + 1);
                 } else {

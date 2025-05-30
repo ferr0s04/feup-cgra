@@ -13,7 +13,7 @@ export class MyHeliBucket extends CGFobject {
         this.cables = new MyCone(scene, 20, 20); // Cone to represent the bucket cables
         this.water = new MyPolygon(scene, 20);
         this.particleCube = new MyCube(scene);
-        this.extinguishRange = 15; // Range for putting out fires
+        this.extinguishRange = 15; // Range putting out fires
         this.waterEffect = 8;  // How many units the water particles spread
 
         // Bucket appearance
@@ -23,7 +23,7 @@ export class MyHeliBucket extends CGFobject {
         this.bucketAppearance.setSpecular(0.1, 0.1, 0.1, 1);
         this.bucketAppearance.setShininess(10);
 
-        // Water texture appearance (top of the bucket, when filled)
+        // Water texture appearance (when filled)
         this.waterTexture = new CGFappearance(this.scene);
         this.waterTexture.loadTexture("textures/waterTex.jpg");
         this.waterTexture.setDiffuse(0.9, 0.9, 0.9, 1);
@@ -31,7 +31,7 @@ export class MyHeliBucket extends CGFobject {
         this.waterTexture.setShininess(10);
         this.waterTexture.setTextureWrap("REPEAT", "REPEAT");
 
-        // Cable appearance (transparent)
+        // Cable appearance
         this.cableAppearance = new CGFappearance(scene);
         this.cableAppearance.setAmbient(0.1, 0.1, 0.1, 1);
         this.cableAppearance.setDiffuse(0.9, 0.9, 0.9, 0.5);
@@ -78,7 +78,6 @@ export class MyHeliBucket extends CGFobject {
         if (this.isDropping) {
             if (t - this.dropStartTime > this.dropDuration) {
                 this.isDropping = false;
-                // Check for fire extinguishing when water finishes dropping
                 if (this.scene.forest) {
                     this.scene.forest.checkFireExtinguish(
                         this.scene.heli.x - this.scene.forest.forestX, 
@@ -87,16 +86,15 @@ export class MyHeliBucket extends CGFobject {
                     );
                 }
             } else {
-                // Add new particles with wider spread
                 for (let i = 0; i < 5; i++) {
                     const spread = this.waterEffect;
                     const particle = new MyWaterParticle(
-                        0 + (Math.random() - 0.5) * spread,  // wider x spread
+                        (Math.random() - 0.5) * spread,
                         -6.5,
-                        0 + (Math.random() - 0.5) * spread,  // wider z spread
-                        (Math.random() - 0.5) * 4,        // faster x velocity
-                        -2,                               // faster downward velocity
-                        (Math.random() - 0.5) * 4         // faster z velocity
+                        (Math.random() - 0.5) * spread,
+                        (Math.random() - 0.5) * 4,
+                        -2,
+                        (Math.random() - 0.5) * 4
                     );
                     this.particles.push(particle);
                 }
@@ -126,7 +124,7 @@ export class MyHeliBucket extends CGFobject {
 
         // Cables
         this.scene.pushMatrix();
-        this.scene.translate(0, -6.5, 0);  // Cone above the bucket
+        this.scene.translate(0, -6.5, 0);
         this.scene.scale(1, 7, 1);
         this.cableAppearance.apply();
         this.cables.display();

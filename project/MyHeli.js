@@ -46,23 +46,17 @@ export class MyHeli extends CGFobject {
 
     turn(v) {
         this.orientationY += v;
-    
-        // Calcula a norma da velocidade atual no plano XZ
         const speed = Math.sqrt(this.velX**2 + this.velZ**2);
-        
         if (speed > 0) {
-            // Atualiza a direção com base na nova orientação
             this.velX = speed * Math.sin(this.orientationY);
             this.velZ = speed * Math.cos(this.orientationY);
         }
     }
 
     accelerate(v) {
-        // Calcula a velocidade atual no plano XZ
         const speed = Math.sqrt(this.velX**2 + this.velZ**2);
         const newSpeed = Math.max(0, speed + v * 4);
     
-        // Mantém a direção original baseada na orientação atual
         this.velX = newSpeed * Math.sin(this.orientationY);
         this.velZ = newSpeed * Math.cos(this.orientationY);
     }
@@ -115,7 +109,6 @@ export class MyHeli extends CGFobject {
                     this.velY = 0;
                     this.state = "overLake";
                     this.bucketDisplayed = true;
-                    // Start filling automatically if bucket is empty and not already filling
                     if (this.bucketEmpty && !this.fillingBucket) {
                         this.fillingBucket = true;
                         this.fillingStartTime = t;
@@ -154,7 +147,7 @@ export class MyHeli extends CGFobject {
                 }
                 break;
     
-            default: // cruising, idle, etc.
+            default: // cruising, idle, ...
                 this.x += this.velX * dt;
                 this.y += this.velY * dt;
                 this.z += this.velZ * dt;
@@ -169,7 +162,7 @@ export class MyHeli extends CGFobject {
                 const dz = fire.z - this.z + this.scene.forest.forestZ;
                 const distance = Math.sqrt(dx * dx + dz * dz);
 
-                if (distance < 5) {  // If very close to a fire
+                if (distance < 5) {
                     overFire = true;
                     break;
                 }
@@ -180,15 +173,14 @@ export class MyHeli extends CGFobject {
                 this.bucketEmpty = true;
                 this.bucketDropTime = t + this.bucket.dropDuration;
             }
-            this.dropRequested = false; // Reset flag regardless
+            this.dropRequested = false;
         }
 
         if (this.fillingBucket) {
             if (t - this.fillingStartTime >= this.fillingDuration) {
                 this.fillingBucket = false;
-                this.bucketEmpty = false; // Bucket is now full
+                this.bucketEmpty = false; // Bucket full
             }
-            // While filling, don't allow movement
             return;
         }
 
@@ -202,7 +194,7 @@ export class MyHeli extends CGFobject {
             }
         }
 
-        // Update bucket and particles
+        // Update bucket
         if (this.bucket) {
             this.bucket.update(t);
         }
@@ -223,10 +215,9 @@ export class MyHeli extends CGFobject {
                 this.velZ = 0;
                 this.velY = -2;
             } else {
-                // Orient towards the heliport before moving
                 const dx = this.heliportX - this.x;
                 const dz = this.heliportZ - this.z;
-                this.targetOrientationY = Math.atan2(dx, dz); // Angle to heliport
+                this.targetOrientationY = Math.atan2(dx, dz);
                 this.state = "goingToHeliport";
             }
         }
@@ -241,7 +232,6 @@ export class MyHeli extends CGFobject {
 
     overLake() {
         if (!this.lakeValidPoints) return false;
-        // Check if helicopter is close to any valid lake point
         for (const pt of this.lakeValidPoints) {
             if (Math.abs(this.x - pt.x) < 1 && Math.abs(this.z - pt.z) < 1) {
                 return true;
@@ -277,7 +267,6 @@ export class MyHeli extends CGFobject {
         } else if (forward === false) {
             this.tiltAngle = Math.max(this.tiltAngle - tiltSpeed, -maxTilt);
         } else {
-            // Volta gradualmente ao zero
             if (this.tiltAngle > 0) {
                 this.tiltAngle = Math.max(0, this.tiltAngle - tiltSpeed);
             } else if (this.tiltAngle < 0) {

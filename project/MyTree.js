@@ -85,7 +85,7 @@ export class MyTree extends CGFobject {
         // Foliage
         for (let i = 0; i < this.pyramidCount; i++) {
             this.scene.pushMatrix();
-            const scaleFactor = (1.2 - i * (0.8 / this.pyramidCount)) * 5; // Controla a largura das pirâmides
+            const scaleFactor = (1.2 - i * (0.8 / this.pyramidCount)) * 5;
             const heightStep = this.treeHeight * 0.2 + i * (this.foliageHeight / this.pyramidCount) * 1.5;
 
             this.scene.translate(0, heightStep, 0);

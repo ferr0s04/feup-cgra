@@ -33,7 +33,6 @@ export class MyHeliTail extends CGFobject {
     }
 
     display(bladeAngle = 0) {
-        // --- Draw all opaque objects first ---
         this.heliBasic.apply();
         this.scene.pushMatrix();
         this.scene.translate(-4, 0, -2);

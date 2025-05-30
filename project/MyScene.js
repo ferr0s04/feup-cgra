@@ -180,12 +180,12 @@ export class MyScene extends CGFscene {
       this.heli.dropRequested = true;
     }
   }
-  
+ 
   update(t) {
     this.checkKeys();
     this.heli.update(t);
 
-    // Day/Night modes
+    // Day/Night
     if (this.isNight) {
       this.lights[0].setDiffuse(0.1, 0.1, 0.3, 1.0);
       this.lights[0].setAmbient(0.1, 0.1, 0.1, 1.0);
@@ -200,17 +200,14 @@ export class MyScene extends CGFscene {
       const distance = 20;
       const height = 15;
 
-      // Account for helicopter's display offset
       const heliCenterX = this.heli.x;
       const heliCenterY = this.heli.y - 0.2;
       const heliCenterZ = this.heli.z - 4.5;
 
-      // Calculate camera position based on helicopter's actual center
       const cameraX = heliCenterX - distance * Math.sin(this.heli.orientationY);
       const cameraY = heliCenterY + height;
       const cameraZ = heliCenterZ - distance * Math.cos(this.heli.orientationY);
 
-      // Look at point slightly ahead of helicopter's center
       const lookAtX = heliCenterX + 2 * Math.sin(this.heli.orientationY);
       const lookAtY = heliCenterY + 1;
       const lookAtZ = heliCenterZ + 2 * Math.cos(this.heli.orientationY);
@@ -252,22 +249,18 @@ export class MyScene extends CGFscene {
       const imageData = ctx.getImageData(0, 0, img.width, img.height).data;
 
       // Lake world coordinates
-      const lakeWorldX = 70; // centerX
-      const lakeWorldZ = -10; // centerZ
+      const lakeWorldX = 70;
+      const lakeWorldZ = -10;
       const lakeWorldWidth = 70;
       const lakeWorldHeight = 70;
 
-      // Store valid (x, z) points
       let validPoints = [];
 
-      // Iterate through each pixel in the mask image
       for (let y = 0; y < img.height; y++) {
           for (let x = 0; x < img.width; x++) {
               const idx = (y * img.width + x) * 4;
               const r = imageData[idx], g = imageData[idx+1], b = imageData[idx+2];
-              // If pixel is black (lake)
               if (r < 10 && g < 10 && b < 10) {
-                  // Map image (x, y) to world (X, Z)
                   const worldX = lakeWorldX - lakeWorldWidth/2 + (x / img.width) * lakeWorldWidth;
                   const worldZ = lakeWorldZ - lakeWorldHeight/2 + (y / img.height) * lakeWorldHeight;
                   validPoints.push({ x: worldX, z: worldZ });
@@ -275,7 +268,6 @@ export class MyScene extends CGFscene {
           }
       }
 
-      // Pass validPoints to the helicopter
       this.heli.lakeValidPoints = validPoints;
   }
 

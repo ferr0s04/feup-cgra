@@ -79,7 +79,6 @@ export class MyForest extends CGFobject {
             let minDistance = Infinity;
             let selectedIndex = -1;
 
-            // Search for nearby trees that haven't been used
             for (let j = 0; j < this.treeInstances.length; j++) {
                 if (usedPositions.has(j)) continue;
 
@@ -88,7 +87,6 @@ export class MyForest extends CGFobject {
                 const dz = tree.posZ - startTree.posZ;
                 const distance = Math.sqrt(dx * dx + dz * dz);
 
-                // Only consider trees within a reasonable radius (adjust 15 to control spread)
                 if (distance < 30 && distance < minDistance) {
                     minDistance = distance;
                     closestTree = tree;
@@ -112,7 +110,6 @@ export class MyForest extends CGFobject {
         const templates = [];
         
         for (let i = 0; i < count; i++) {
-            // Parâmetros para cada modelo de árvore
             const rotationDeg = Math.random() * 20 - 10;
             const rotationAxis = Math.random() < 0.5 ? 'X' : 'Z';
             const trunkBaseRadius = 0.5 + Math.random() * 0.1;
@@ -123,7 +120,6 @@ export class MyForest extends CGFobject {
                 0.1 + Math.random() * 0.2
             ];
 
-            // Escolha de texturas
             const trunkAppearance = this.useTextures
                 ? this.randomFrom(this.trunkTextures)
                 : null;
@@ -162,10 +158,8 @@ export class MyForest extends CGFobject {
                 const posX = -this.width / 2 + j * spacingX + spacingX / 2 + offsetX;
                 const posZ = -this.depth / 2 + i * spacingZ + spacingZ / 2 + offsetZ;
                 
-                // Select a random template
                 const templateIndex = Math.floor(Math.random() * this.treeTemplates.length);
                 
-                // Store just the position and template reference
                 instances.push({
                     templateIndex: templateIndex,
                     posX: posX,
@@ -194,7 +188,7 @@ export class MyForest extends CGFobject {
         }
 
         // Display fires
-        this.scene.setDefaultAppearance(); // Reset appearance before drawing fires
+        this.scene.setDefaultAppearance();
         for (const fire of this.fires) {
             fire.update(this.scene.time);
             fire.display();

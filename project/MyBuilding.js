@@ -1,4 +1,4 @@
-import { CGFobject, CGFappearance } from '../lib/CGF.js';
+import { CGFobject, CGFappearance , CGFshader } from '../lib/CGF.js';
 import { MyCube } from './MyCube.js';
 import { MyQuad } from './MyQuad.js';
 import { MyWindow } from './MyWindow.js';
@@ -62,13 +62,18 @@ export class MyBuilding extends CGFobject {
         this.heliportAppearance.setSpecular(0.1, 0.1, 0.1, 1);
         this.heliportAppearance.setShininess(10);
 
-        // Heliport appearances for up and down states
+        // Heliport blend up and down
+        this.heliportBlendShader = new CGFshader(this.scene.gl, "shaders/heliportBlend.vert", "shaders/heliportBlend.frag");
+        this.heliportBlendShader.setUniformsValues({ blendFactor: 0.0 });
+
+        // Heliport up appearance
         this.heliportAppearanceUp = new CGFappearance(this.scene);
         this.heliportAppearanceUp.loadTexture('textures/heliporto_up.png');
         this.heliportAppearanceUp.setDiffuse(1, 1, 1, 1);
         this.heliportAppearanceUp.setSpecular(0.1, 0.1, 0.1, 1);
         this.heliportAppearanceUp.setShininess(10);
 
+        // Heliport down appearance
         this.heliportAppearanceDown = new CGFappearance(this.scene);
         this.heliportAppearanceDown.loadTexture('textures/heliporto_down.png');
         this.heliportAppearanceDown.setDiffuse(1, 1, 1, 1);
@@ -110,6 +115,9 @@ export class MyBuilding extends CGFobject {
     }
 
     display() {
+        // Helicopter state
+        let heliState = this.scene.heli?.state;
+
         // Left module
         this.scene.pushMatrix();
         this.scene.translate(-this.lateralWidth, 0, 0);
@@ -132,20 +140,17 @@ export class MyBuilding extends CGFobject {
         this.wallAppearance.apply();
         this.rightModule.display();
         this.scene.popMatrix();
-
-        let heliState2 = this.scene.heli?.state;
-        let isLanding = heliState2 === "descending" && this.scene.heli?.overHeliport();
-        let isTakingOff = heliState2 === "takingOff";
-        let shouldBlink = isTakingOff || isLanding;
+        
+        // Lights
+        let shouldBlink = (heliState === "descending" && this.scene.heli?.overHeliport()) || (heliState === "takingOff");
         let blinkOn = shouldBlink ? Math.floor((this.scene.time ?? 0) / 500) % 2 === 0 : false;
 
-        // Lights
         for (let i = 0; i < 4; i++) {
             if (blinkOn) this.lightsAppearance.apply();
             else this.lightsOffAppearance.apply();
 
             this.scene.pushMatrix();
-            const margin = 0.5; // distance from the edge
+            const margin = 0.5;
             let x = (i % 2 === 0) ? margin : this.centralWidth - 1;
             let z = (i < 2) ? this.depth - 1 - margin : margin;
             this.scene.translate(x, this.centralFloors * this.floorHeight + 0.01, z);
@@ -173,11 +178,22 @@ export class MyBuilding extends CGFobject {
         this.scene.popMatrix();
 
         // Heliport
-        let heliState = this.scene.heli?.state;
+        let period = 2000;
+        let t = (this.scene.time ?? 0) % period;
+        let blend = 0.5 * (1 + Math.sin(2 * Math.PI * t / period));
+        
+        if (heliState === "takingOff" || heliState === "descending" && this.scene.heli?.overHeliport()) {
+            this.scene.setActiveShader(this.heliportBlendShader);
+            this.heliportBlendShader.setUniformsValues({ blendFactor: blend });
+            this.heliportBlendShader.setUniformsValues({ uSampler0: 0, uSampler1: 1 });
+        }
+
         if (heliState === "takingOff") {
-            this.heliportAppearanceUp.apply();
+            this.heliportAppearance.texture.bind(0);
+            this.heliportAppearanceUp.texture.bind(1);
         } else if (heliState === "descending" && this.scene.heli?.overHeliport()) {
-            this.heliportAppearanceDown.apply();
+            this.heliportAppearance.texture.bind(0);
+            this.heliportAppearanceDown.texture.bind(1);
         } else {
             this.heliportAppearance.apply();
         }
@@ -192,6 +208,10 @@ export class MyBuilding extends CGFobject {
 
         this.heliportQuad.display();
         this.scene.popMatrix();
+
+        if (heliState === "takingOff" || heliState === "descending" && this.scene.heli?.overHeliport()) {
+            this.scene.setActiveShader(this.scene.defaultShader);
+        }
 
         // Bombeiros sign
         this.scene.pushMatrix();
@@ -221,7 +241,7 @@ export class MyBuilding extends CGFobject {
             let numWindows = this.windowsPerFloor;
             let b = (moduleWidth - numWindows * windowWidth) / (numWindows + 1);
         
-            // Fallback attempts
+            // Attempts if no space for all the asked windows
             if (b <= 0) {
                 numWindows = 2;
                 b = (moduleWidth - numWindows * windowWidth) / (numWindows + 1);
@@ -230,7 +250,7 @@ export class MyBuilding extends CGFobject {
                 numWindows = 1;
                 b = (moduleWidth - numWindows * windowWidth) / (numWindows + 1);
             }
-            if (b <= 0) return; // Abort drawing if no space
+            if (b <= 0) return; // Abort if no space
         
             for (let floor = startFloor; floor < floors; floor++) {
                 let baseY = h * floor + spacingY;

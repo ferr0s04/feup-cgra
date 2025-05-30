@@ -30,7 +30,7 @@ export class ShaderScene extends CGFscene {
 		this.axis = new CGFaxis(this);
 		this.enableTextures(true);
 
-		this.lake = new MyLake(this, 100, 0, 1, 0, 1); // Large, smooth lake
+		this.lake = new MyLake(this, 100, 0, 1, 0, 1);
 
 		this.appearance = new CGFappearance(this);
 		this.appearance.setAmbient(0.3, 0.3, 0.3, 1);
@@ -82,12 +82,12 @@ export class ShaderScene extends CGFscene {
 
 		this.appearance.setTexture(this.textureWater);
 		this.appearance.apply();
-		this.textureWaterMap.bind(1); // bind extra texture for displacement or reflection
+		this.textureWaterMap.bind(1);
 
 		this.setActiveShader(this.waterShader);
 
 		this.pushMatrix();
-		this.scale(50, 1, 50); // make the lake wide and flat
+		this.scale(50, 1, 50);
 		this.lake.display();
 		this.popMatrix();
 
